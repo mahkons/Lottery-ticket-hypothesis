@@ -12,4 +12,7 @@
 
 # generated
 build/
-generated
+generated/
+
+# data
+data/
