@@ -1,0 +1,15 @@
+# idea
+.idea
+
+# python
+**/__pycache__
+*.pyc
+
+# vim backup
+*.swp
+*.swo
+*.swn
+
+# generated
+build/
+generated
