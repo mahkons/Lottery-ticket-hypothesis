@@ -35,16 +35,23 @@ def train(dataloader, epochs, model, optimizer, criterion, device):
     torch.cuda.empty_cache()
 
 
-def iterative_prunning(model, device):
-    trainloader = load_train_data()
+def iterative_pruning(model, device):
+    trainloader = load_train_data(batch_size=4)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
-    for iter in range(5):
+    for iter in range(7):
         train(trainloader, 10, model, optimizer, criterion, device)
-        if (iter != 4):
-            model.prune_net(10)
-            model.reinit_net()
+        model.prune_net(20)
+        model.reinit_net()
+
+
+def train_no_pruning(model, epochs, device):
+    trainloader = load_train_data(batch_size=4)
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
+
+    train(trainloader, epochs, model, optimizer, criterion, device)
 
 
 def create_parser():
@@ -58,4 +65,6 @@ if __name__ == "__main__":
     device = torch.device(args.device)
 
     wrapper = PruningWrapper(SimpleNet(), device)
-    iterative_prunning(wrapper, device)
+
+    iterative_pruning(wrapper, device)
+    train_no_pruning(wrapper, 30, device)
