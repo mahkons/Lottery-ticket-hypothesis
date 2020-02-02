@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -20,3 +21,16 @@ class SimpleNet(nn.Module):
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
         return x
+
+    def get_path(self):
+        return SimpleNet.__name__;
+
+    @classmethod
+    def load_model(cls, path):
+        state_dict = torch.load(path, map_location='cpu')
+        net = cls()
+        net.load_state_dict(state_dict=state_dict)
+        return net
+
+    def save_model(self, path):
+        torch.save(self.state_dict(), path)
