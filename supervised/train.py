@@ -11,6 +11,7 @@ from PruningWrapper import PruningWrapper
 
 def train(dataloader, epochs, model, optimizer, criterion, device):
 
+    plot_data = list()
     for epoch in range(epochs):
         running_loss = 0.0
         pbar = tqdm(enumerate(dataloader, 0))
@@ -25,38 +26,42 @@ def train(dataloader, epochs, model, optimizer, criterion, device):
             model.zero_unmasked_grad()
             optimizer.step()
 
+            plot_data.append(loss.item())
             running_loss += loss.item()
-            if i % 2000 == 1999:
+            if i % 500 == 499:
                 pbar.write('[%d, %5d] loss: %.3f' %
-                    (epoch + 1, i + 1, running_loss / 2000))
+                    (epoch + 1, i + 1, running_loss / 500))
                 running_loss = 0.0
 
     model.save_model("generated/" + model.get_path())
     torch.cuda.empty_cache()
+    return plot_data
 
 
-def iterative_pruning(model, device):
-    trainloader = load_train_data(batch_size=4)
+def iterative_pruning(model, iters, device):
+    trainloader = load_train_data(batch_size=16)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
-    for iter in range(7):
+    for iter in tqdm(range(iters)):
+        optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
         train(trainloader, 10, model, optimizer, criterion, device)
         model.prune_net(20)
         model.reinit_net()
 
 
 def train_no_pruning(model, epochs, device):
-    trainloader = load_train_data(batch_size=4)
+    trainloader = load_train_data(batch_size=16)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
-    train(trainloader, epochs, model, optimizer, criterion, device)
+    plot_data = train(trainloader, epochs, model, optimizer, criterion, device)
+    return plot_data
 
 
 def create_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cpu', required=False)
+    parser.add_argument('--pruning-iters', type=int, default=0, required=False)
     return parser
 
 
@@ -65,6 +70,9 @@ if __name__ == "__main__":
     device = torch.device(args.device)
 
     wrapper = PruningWrapper(SimpleNet(), device)
+    #  wrapper = PruningWrapper.load_model(SimpleNet, "generated/" + SimpleNet.__name__, device)
 
-    iterative_pruning(wrapper, device)
-    train_no_pruning(wrapper, 30, device)
+    iterative_pruning(wrapper, args.pruning_iters, device)
+    plot_data = train_no_pruning(wrapper, 20, device)
+    torch.save(plot_data, "plots/%.3f" % ((0.8 ** args.pruning_iters)*100))
+

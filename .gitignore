@@ -13,6 +13,7 @@
 # generated
 build/
 generated/
+plots/
 
 # data
 data/

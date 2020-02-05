@@ -1,8 +1,16 @@
 # Lottery ticket hypothesis
-This repository contains an implementation of the article [Lottery Ticket Hypothesis] (https://arxiv.org/pdf/1803.03635.pdf)
-And an application of this hypothesis in reinforcement learning
- - [ ] Supervised 
-    - [x] toy net for CIFAR10
-    - [ ] ??net for CIFAR10
- - [ ] Reinforcement learning
+This repository contains an implementation of the article [Lottery Ticket Hypothesis](https://arxiv.org/abs/1803.03635)
+And an application of this hypothesis to reinforcement learning
+ - Supervised 
+    - [x] Iterative magnitude pruning implementation
+    - [ ] Testing with net VGG19 on dataset CIFAR10
+ - Reinforcement learning
     - [ ] ?
+
+# Related articles
+- Rewinding technique and stability analysis: 
+[Stabilizing the Lottery Ticket Hypothesis](https://arxiv.org/abs/1903.01611), [Linear mode connectivity and the lottery ticket hypothesis](https://arxiv.org/abs/1912.05671)
+- Application of hypothesis to reinforcement learning:
+[Lottery tickets in RL and NLP](https://arxiv.org/abs/1906.02768)
+- Early-bird lottery tickets:
+[Drawing early-bird tickets](https://arxiv.org/abs/1909.11957)
