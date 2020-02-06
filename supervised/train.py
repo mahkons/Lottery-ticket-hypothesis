@@ -7,6 +7,7 @@ import argparse
 
 from load_data import load_train_data
 from networks.SimpleNet import SimpleNet
+from networks.VGG19 import vgg19
 from PruningWrapper import PruningWrapper
 
 def train(dataloader, epochs, model, optimizer, criterion, device):
@@ -39,18 +40,18 @@ def train(dataloader, epochs, model, optimizer, criterion, device):
 
 
 def iterative_pruning(model, iters, device):
-    trainloader = load_train_data(batch_size=16)
+    trainloader = load_train_data(batch_size=4)
     criterion = nn.CrossEntropyLoss()
 
     for iter in tqdm(range(iters)):
         optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
-        train(trainloader, 10, model, optimizer, criterion, device)
+        train(trainloader, 1, model, optimizer, criterion, device)
         model.prune_net(20)
         model.reinit_net()
 
 
 def train_no_pruning(model, epochs, device):
-    trainloader = load_train_data(batch_size=16)
+    trainloader = load_train_data(batch_size=4)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
@@ -69,10 +70,10 @@ if __name__ == "__main__":
     args = create_parser().parse_args()
     device = torch.device(args.device)
 
-    wrapper = PruningWrapper(SimpleNet(), device)
+    wrapper = PruningWrapper(vgg19(), device)
     #  wrapper = PruningWrapper.load_model(SimpleNet, "generated/" + SimpleNet.__name__, device)
 
     iterative_pruning(wrapper, args.pruning_iters, device)
-    plot_data = train_no_pruning(wrapper, 20, device)
+    plot_data = train_no_pruning(wrapper, 1, device)
     torch.save(plot_data, "plots/%.3f" % ((0.8 ** args.pruning_iters)*100))
 
