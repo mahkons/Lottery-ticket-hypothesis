@@ -1,19 +1,17 @@
 import torch
-import gym
 from tqdm import tqdm
 
 from agent.Agent import Agent
 from agent.ReplayMemory import ReplayMemory
 from agent.DQN import ControllerDQN
+from envs.CartPole import CartPoleWrapper
 
 device = torch.device("cpu")
-env = gym.make("CartPole-v1")
-action_sz = env.action_space.n
-state_sz = 4
+env = CartPoleWrapper()
 
 plot_data = list()
-agent = Agent(env, ControllerDQN(state_sz, action_sz, ReplayMemory(10000)), device=device)
-epochs=1000
+agent = Agent(env, ControllerDQN(env.state_sz, env.action_sz, ReplayMemory(10000)), device=device)
+epochs=500
 pbar = tqdm(range(epochs))
 for epoch in pbar:
     reward, steps = agent.rollout(show=False)

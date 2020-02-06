@@ -1,5 +1,4 @@
 import numpy as np
-import gym
 from collections import namedtuple
 from itertools import count
 
@@ -18,18 +17,13 @@ class Agent:
 
     def rollout(self, show=False):
         state = self.wrap(self.env.reset())
-        total_reward, steps = 0, 0
 
         for t in count():
             if show:
                 self.env.render()
 
             action = self.controller.select_action(state)
-            obs, reward, done, _ = self.env.step(action)
-            total_reward += reward
-
-            if done:
-                reward = -1000
+            obs, reward, done, _, _ = self.env.step(action)
 
             reward = self.wrap(reward)
             action = self.wrap(action, dtype=torch.long)
@@ -39,9 +33,8 @@ class Agent:
             state = next_state
 
             self.controller.optimize()
-            steps = t + 1
             if done:
                 break;
-        return total_reward, steps
+        return self.env.total_reward, self.env.steps
 
 
