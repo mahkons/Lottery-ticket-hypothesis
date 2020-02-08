@@ -10,7 +10,7 @@ from envs.CartPole import CartPole
 from envs.MountainCar import MountainCar
 from envs.LunarLander import LunarLander
 
-from params import CartPoleConfig
+from params import CartPoleConfig, LunarLanderConfig
 
 device = torch.device("cpu")
 
