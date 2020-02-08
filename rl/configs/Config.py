@@ -6,6 +6,6 @@ class OptimizerConfig(Config):
     def __init__(self):
         pass
 
-class NetworkConfig(Config):
+class MemoryConfig(Config):
     def __init__(self):
         pass
