@@ -68,7 +68,7 @@ class ControllerDQN(nn.Module):
             next_values = self.target_net(next_state).max(1)[0]
             expected_state_action_values = (next_values * GAMMA) + reward * (1 - done)
 
-        loss = F.smooth_l1_loss(state_action_values, expected_state_action_values.unsqueeze(1))
+        loss = F.smooth_l1_loss(state_action_values.squeeze(1), expected_state_action_values)
 
         self.optimizer.zero_grad()
         loss.backward()

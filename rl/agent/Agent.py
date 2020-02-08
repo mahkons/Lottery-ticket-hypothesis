@@ -18,7 +18,7 @@ class Agent:
     def rollout(self, show=False):
         state = self.wrap(self.env.reset())
 
-        for t in count():
+        while True:
             if show:
                 self.env.render()
 
@@ -36,5 +36,4 @@ class Agent:
             if done:
                 break;
         return self.env.total_reward, self.env.steps
-
 

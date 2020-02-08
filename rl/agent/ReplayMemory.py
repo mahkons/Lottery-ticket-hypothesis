@@ -44,9 +44,6 @@ class ReplayMemory:
     def sample_positions(self, batch_size):
         return random.sample(range(len(self.memory)), batch_size)
 
-    def update(*args, **kwargs):
-        pass
-
     def __len__(self):
         return len(self.memory)
 
