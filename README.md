@@ -2,8 +2,8 @@
 This repository contains an implementation of the article [Lottery Ticket Hypothesis](https://arxiv.org/abs/1803.03635)
 And an application of this hypothesis to reinforcement learning
  - Supervised 
-    - [x] Iterative magnitude pruning implementation
-    - [ ] Testing with net VGG19 on dataset CIFAR10
+    - [x] Implement iterative magnitude pruning
+    - [ ] Test using net VGG19 and dataset CIFAR10
  - Reinforcement learning
     - [ ] ?
 

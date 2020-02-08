@@ -26,6 +26,9 @@ class VGG(nn.Module):
         x = self.classifier(x)
         return x
 
+    def get_path(self):
+        return VGG.__name__;
+
     def _initialize_weights(self):
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
