@@ -11,11 +11,12 @@ from envs.MountainCar import MountainCar
 from envs.LunarLander import LunarLander
 
 device = torch.device("cpu")
-env = LunarLander()
+env = CartPole()
+controller = ControllerDQN(env.state_sz, env.action_sz, ReplayMemory(100000), lr=1e-3, device=device)
+agent = Agent(env, controller, device=device)
 
 plot_data = list()
-agent = Agent(env, ControllerDQN(env.state_sz, env.action_sz, ReplayMemory(10000), lr=1e-3, device=device), device=device)
-epochs=1000
+epochs=100
 pbar = tqdm(range(epochs))
 for epoch in pbar:
     reward, steps = agent.rollout(show=False)

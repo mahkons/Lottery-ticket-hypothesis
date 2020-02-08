@@ -7,6 +7,7 @@ import math
 import random
 
 from agent.ReplayMemory import Transition
+from networks.DQN import DQN
 
 BATCH_SIZE = 64
 GAMMA = 0.999
@@ -14,18 +15,6 @@ EPS_START = 0.9
 EPS_END = 0.05
 EPS_DECAY = 1000
 TARGET_UPDATE = 500
-
-
-class DQN(nn.Module):
-    def __init__(self, state_sz, action_sz):
-        super(DQN, self).__init__()
-        self.fc1 = nn.Linear(state_sz, 256)
-        self.fc2 = nn.Linear(256, action_sz)
-
-    def forward(self, x):
-        x = F.relu(self.fc1(x))
-        x = self.fc2(x)
-        return x
 
 
 class ControllerDQN(nn.Module):
@@ -36,8 +25,8 @@ class ControllerDQN(nn.Module):
         self.memory = memory
         self.device = device
 
-        self.net = DQN(state_sz, action_sz).to(device)
-        self.target_net = DQN(state_sz, action_sz).to(device)
+        self.net = DQN(state_sz, action_sz, [256]).to(device)
+        self.target_net = DQN(state_sz, action_sz, [256]).to(device)
 
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=lr)
 
