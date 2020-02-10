@@ -8,6 +8,7 @@ import random
 
 from agent.ReplayMemory import Transition
 from networks.DQN import DQN
+from pruners.LayerwisePruner import LayerwisePruner
 
 
 class ControllerDQN(nn.Module):
@@ -16,6 +17,7 @@ class ControllerDQN(nn.Module):
         self.state_sz = env.state_sz
         self.action_sz = env.action_sz
         self.memory = memory
+        self.params = params
         self.device = device
 
         self.eps_start = params.eps_start
@@ -28,6 +30,7 @@ class ControllerDQN(nn.Module):
         self.net = DQN(self.state_sz, self.action_sz, params.layers_sz).to(device)
         self.target_net = DQN(self.state_sz, self.action_sz, params.layers_sz).to(device)
 
+        self.pruner = LayerwisePruner(self.net, self.device)
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=params.optimizer_config.lr)
 
         self.steps_done = 0
@@ -61,7 +64,18 @@ class ControllerDQN(nn.Module):
 
         self.optimizer.zero_grad()
         loss.backward()
+        self.pruner.zero_unmasked_grad()
         self.optimizer.step()
+
+    def prune(self, p):
+        self.pruner.prune_net(p)
+
+    def reinit(self, ):
+        self.memory.clean()
+        self.steps_done = 0
+        self.optimizer = torch.optim.Adam(self.net.parameters(), lr=self.params.optimizer_config.lr)
+        self.pruner.reinit_net()
+        self.hard_update()
 
     def save_model(self, path):
         torch.save(self, path)

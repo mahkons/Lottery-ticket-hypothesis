@@ -14,20 +14,25 @@ from params import CartPoleConfig, LunarLanderConfig
 
 device = torch.device("cpu")
 
-env = CartPole()
-config = CartPoleConfig()
+env = LunarLander()
+config = LunarLanderConfig()
 
 memory = ReplayMemory(config.memory_config.memory_size)
 controller = ControllerDQN(env, memory, config, device=device)
 agent = Agent(env, controller, device=device)
 
-plot_data = list()
-epochs=500
-pbar = tqdm(range(epochs))
-for epoch in pbar:
-    reward, steps = agent.rollout(show=False)
-    pbar.set_description("Epoch [{}/{}]".format(epoch + 1, epochs))
-    pbar.write("Reward: {:.3f}".format(reward))
-    plot_data.append(reward)
+for iter in range(15):
+    plot_data = list()
+    epochs=1000
+    pbar = tqdm(range(epochs))
+    for epoch in pbar:
+        reward, steps = agent.rollout(show=False)
+        pbar.set_description("Epoch [{}/{}]".format(epoch + 1, epochs))
+        pbar.write("Reward: {:.3f}".format(reward))
+        plot_data.append(reward)
 
-show_reward_plot(plot_data)
+    show_reward_plot(plot_data)
+    torch.save(plot_data, "plots/LunarLander_iter" + str(iter) + "_prune" + str(0.8 ** iter))
+
+    controller.prune(20)
+    controller.reinit()
