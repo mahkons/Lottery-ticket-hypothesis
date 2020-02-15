@@ -21,7 +21,7 @@ memory = ReplayMemory(config.memory_config.memory_size)
 controller = ControllerDQN(env, memory, config, device=device)
 agent = Agent(env, controller, device=device)
 
-for iter in range(1):
+for iter in range(15):
     plot_data = list()
     epochs = 1000
     pbar = tqdm(range(epochs))
@@ -30,6 +30,8 @@ for iter in range(1):
         pbar.set_description("Epoch [{}/{}]".format(epoch + 1, epochs))
         pbar.write("Reward: {:.3f}".format(reward))
         plot_data.append(reward)
+        if controller.optimization_completed():
+            break
 
     show_reward_plot(plot_data)
     torch.save(plot_data, "plots/LunarLander_iter" + str(iter) + "_prune" +

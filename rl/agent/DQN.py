@@ -9,6 +9,7 @@ import random
 from agent.ReplayMemory import Transition
 from networks.DQN import DQN
 from pruners.LayerwisePruner import LayerwisePruner
+from pruners.GlobalPruner import GlobalPruner
 
 
 class ControllerDQN(nn.Module):
@@ -66,6 +67,9 @@ class ControllerDQN(nn.Module):
         loss.backward()
         self.pruner.optimization_step()
         self.optimizer.step()
+
+    def optimization_completed(self):
+        return False
 
     def prune(self, p):
         self.pruner.prune_net(p)
