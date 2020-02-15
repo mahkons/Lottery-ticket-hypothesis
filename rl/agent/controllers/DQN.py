@@ -6,7 +6,7 @@ import torch.optim
 import math
 import random
 
-from agent.ReplayMemory import Transition
+from agent.memory.ReplayMemory import Transition
 from networks.DQN import DQN
 from pruners.LayerwisePruner import LayerwisePruner
 from pruners.GlobalPruner import GlobalPruner

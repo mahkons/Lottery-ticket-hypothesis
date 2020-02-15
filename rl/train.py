@@ -2,8 +2,8 @@ import torch
 from tqdm import tqdm
 
 from agent.Agent import Agent
-from agent.ReplayMemory import ReplayMemory
-from agent.DQN import ControllerDQN
+from agent.memory.ReplayMemory import ReplayMemory
+from agent.controllers.DQN import ControllerDQN
 from make_plots import show_reward_plot
 
 from envs.CartPole import CartPole
@@ -39,3 +39,6 @@ for iter in range(15):
 
     controller.prune(20)
     controller.reinit()
+
+
+
