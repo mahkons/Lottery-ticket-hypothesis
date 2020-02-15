@@ -64,7 +64,7 @@ class ControllerDQN(nn.Module):
 
         self.optimizer.zero_grad()
         loss.backward()
-        self.pruner.zero_unmasked_grad()
+        self.pruner.optimization_step()
         self.optimizer.step()
 
     def prune(self, p):

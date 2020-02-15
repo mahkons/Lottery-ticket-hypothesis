@@ -4,6 +4,7 @@ import numpy as np
 
 from pruners.Pruner import Pruner
 
+
 # Prunes p% of remaining weights on each layer separately 
 # prunes only weights, not biases
 class LayerwisePruner(Pruner):

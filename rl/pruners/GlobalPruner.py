@@ -4,6 +4,9 @@ import numpy as np
 
 from pruners.Pruner import Pruner
 
+
+# Prunes p% of remaining weights
+# prunes both weights and biases
 class GlobalPruner(Pruner):
     def prune_net(self, p):
         full_data = list()
