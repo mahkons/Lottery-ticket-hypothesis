@@ -16,8 +16,8 @@ And an application of this hypothesis to reinforcement learning
 [Drawing early-bird tickets](https://arxiv.org/abs/1909.11957)
 
 ### Something to read later, just about pruning
-    https://arxiv.org/abs/1810.02054   
-    https://arxiv.org/abs/1810.05270  
-    https://arxiv.org/abs/1907.04840  
-    https://arxiv.org/abs/2002.00585  
-    https://arxiv.org/abs/2002.03875  
+https://arxiv.org/abs/1810.02054   
+https://arxiv.org/abs/1810.05270  
+https://arxiv.org/abs/1907.04840  
+https://arxiv.org/abs/2002.00585  
+https://arxiv.org/abs/2002.03875  
