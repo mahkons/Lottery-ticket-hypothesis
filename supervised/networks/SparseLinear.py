@@ -16,15 +16,13 @@ class SparseLinear(nn.Module):
 
         self.weight = torch.empty(out_features, in_features)
         init.kaiming_uniform_(self.weight, a=math.sqrt(5))
-        
-        ind = torch.tensor([[i, j] for i in range(out_features) for j in range(in_features)]).t()
-        with torch.no_grad():
-            self.weight = Parameter(self.weight.to_sparse())
+        self.weight = Parameter(self.weight.to_sparse())
 
-        self.bias = Parameter(torch.Tensor(out_features))
+        self.bias = torch.Tensor(out_features)
         fan_in, _ = init._calculate_fan_in_and_fan_out(self.weight)
         bound = 1 / math.sqrt(fan_in)
         init.uniform_(self.bias, -bound, bound)
+        self.bias = Parameter(self.bias)
 
     def forward(self, input):
         return torch.sparse.mm(self.weight, input.T).T + self.bias
@@ -33,9 +31,14 @@ class SparseLinear(nn.Module):
 if __name__ == "__main__":
     x = torch.tensor([[1, 2]], dtype=torch.float)
     a = SparseLinear(2, 3)
+    #  b = Parameter(torch.tensor([[1, 2], [-1, -2]], dtype=torch.float).to_sparse())
 
-    optimizer = optim.SparseAdam(a.parameters())
-    optimizer = optim.Adam(a.parameters())
+    #  optimizer = optim.SparseAdam(a.parameters(), lr=1e-3)
+    #  optimizer = optim.Adam(a.parameters())
+    from SGD import SGD
+
+    optimizer = SGD(a.parameters(), lr=1e-3)
+    #  loss = a(x).sum()
     loss = a(x).sum()
     loss.backward()
     optimizer.step()

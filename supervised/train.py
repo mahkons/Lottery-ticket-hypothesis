@@ -10,6 +10,8 @@ from networks.SimpleNet import SimpleNet
 from networks.VGG19 import vgg19
 from PruningWrapper import PruningWrapper
 
+from networks.SGD import SGD
+
 def train(dataloader, epochs, model, optimizer, criterion, device):
 
     plot_data = list()
@@ -54,7 +56,7 @@ def iterative_pruning(model, iters, device):
 def train_no_pruning(model, epochs, device):
     trainloader = load_train_data(batch_size=4)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
+    optimizer = SGD(model.parameters(), lr=0.001, momentum=0.9)
 
     plot_data = train(trainloader, epochs, model, optimizer, criterion, device)
     return plot_data
@@ -72,7 +74,7 @@ if __name__ == "__main__":
     device = torch.device(args.device)
 
     #  wrapper = PruningWrapper(SimpleNet(), device)
-    wrapper = SimpleNet()
+    wrapper = SimpleNet().to(device)
     #  wrapper = PruningWrapper.load_model(SimpleNet, "generated/" + SimpleNet.__name__, device)
 
     #  iterative_pruning(wrapper, args.pruning_iters, device)
