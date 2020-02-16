@@ -17,3 +17,6 @@ plots/
 
 # data
 data/
+
+# kaggle
+kernel-metadata.json
