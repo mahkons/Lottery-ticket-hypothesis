@@ -16,12 +16,17 @@ class EarlyBirdStop():
 
     def update_mask(self, next_mask_dict):
         self.mask_queue.append(next_mask_dict)
+        if len(self.mask_queue) == 1:
+            return
         cur_sum = sum(map(lambda x: x.sum().item(), self.mask_queue[0].values()))
 
+        max_diff = 0
         for mask1, mask2 in combinations(self.mask_queue, 2):
             sum_diff = self.calc_diff(mask1, mask2)
-            if sum_diff < self.eps * cur_sum:
-                self.stop = True
+            max_diff = max(max_diff, sum_diff)
+
+        if max_diff < self.eps * cur_sum:
+            self.stop = True
 
     def __call__(self):
         return self.stop
