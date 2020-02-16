@@ -7,6 +7,7 @@ import math
 import random
 
 from agent.controllers.NoStop import NoStop
+from agent.controllers.MaskDiffStop import MaskDiffStop
 from agent.memory.ReplayMemory import Transition
 from networks.DQN import DQN
 from pruners.LayerwisePruner import LayerwisePruner
@@ -14,13 +15,12 @@ from pruners.GlobalPruner import GlobalPruner
 
 
 class ControllerDQN(nn.Module):
-    def __init__(self, env, memory, params, stop_criterion=NoStop(), device=torch.device('cpu')):
+    def __init__(self, env, memory, params, device=torch.device('cpu')):
         super(ControllerDQN, self).__init__()
         self.state_sz = env.state_sz
         self.action_sz = env.action_sz
         self.memory = memory
         self.params = params
-        self.stop_criterion = stop_criterion
         self.device = device
 
         self.eps_start = params.eps_start
@@ -34,6 +34,7 @@ class ControllerDQN(nn.Module):
         self.target_net = DQN(self.state_sz, self.action_sz, params.layers_sz).to(device)
 
         self.pruner = LayerwisePruner(self.net, self.device)
+        self.stop_criterion = MaskDiffStop(self.pruner.get_current_mask())
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=params.optimizer_config.lr)
 
         self.steps_done = 0
@@ -71,7 +72,7 @@ class ControllerDQN(nn.Module):
         self.optimizer.step()
 
     def optimization_completed(self):
-        return self.stop_criterion()
+        return self.stop_criterion(self.pruner.get_mask_to_prune(20))
 
     def prune(self, p):
         self.pruner.prune_net(p)
@@ -80,6 +81,7 @@ class ControllerDQN(nn.Module):
         self.memory.clean()
         self.steps_done = 0
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=self.params.optimizer_config.lr)
+        self.stop_criterion(self.pruner.get_current_mask())
         self.pruner.reinit_net()
         self.hard_update()
 

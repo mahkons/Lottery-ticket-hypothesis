@@ -25,6 +25,9 @@ class Pruner():
         for name, param in self.net.named_parameters():
             param.grad.data[~self.mask[name]] = 0
 
+    def get_current_mask(self):
+        return self.mask
+
     # returns dict layer_name->mask of weights, which
     # prune_net function going to prune on that iteration
     def get_mask_to_prune(self, p):
