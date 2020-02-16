@@ -2,8 +2,9 @@ import torch
 import gym
 
 class EnvWrapper():
-    def __init__(self, name):
+    def __init__(self, name, random_state):
         self.env = gym.make(name)
+        self.env.seed(random_state)
         self.action_sz = self.env.action_space.n
         self.state_sz = self.env.observation_space.shape[0]
 

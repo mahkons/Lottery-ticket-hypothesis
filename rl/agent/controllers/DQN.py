@@ -34,7 +34,7 @@ class ControllerDQN(nn.Module):
         self.target_net = DQN(self.state_sz, self.action_sz, params.layers_sz).to(device)
 
         self.pruner = LayerwisePruner(self.net, self.device)
-        self.stop_criterion = MaskDiffStop(self.pruner.get_current_mask())
+        self.stop_criterion = MaskDiffStop()
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=params.optimizer_config.lr)
 
         self.steps_done = 0
@@ -54,6 +54,7 @@ class ControllerDQN(nn.Module):
         if self.steps_done % self.target_net_update_steps == 0:
             self.hard_update()
         self.steps_done += 1
+        self.stop_criterion.update_mask(self.pruner.get_mask_to_prune(50))
         if len(self.memory) < self.batch_size:
             return
 
@@ -72,16 +73,17 @@ class ControllerDQN(nn.Module):
         self.optimizer.step()
 
     def optimization_completed(self):
-        return self.stop_criterion(self.pruner.get_mask_to_prune(20))
+        #  self.stop_criterion.update_mask(self.pruner.get_mask_to_prune(50))
+        return self.stop_criterion()
 
     def prune(self, p):
         self.pruner.prune_net(p)
 
-    def reinit(self, ):
+    def reinit(self):
         self.memory.clean()
         self.steps_done = 0
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=self.params.optimizer_config.lr)
-        self.stop_criterion(self.pruner.get_current_mask())
+        self.stop_criterion.reset()
         self.pruner.reinit_net()
         self.hard_update()
 

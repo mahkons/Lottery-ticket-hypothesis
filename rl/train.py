@@ -1,6 +1,8 @@
 import torch
+import numpy as np
 from tqdm import tqdm
 import argparse
+import random
 
 from agent.Agent import Agent
 from agent.memory.ReplayMemory import ReplayMemory
@@ -14,24 +16,25 @@ from envs.LunarLander import LunarLander
 from params import CartPoleConfig, LunarLanderConfig
 
 
-def train(epochs, prune_iters, device=torch.device('cpu')):
-    env = LunarLander()
+def train(epochs, prune_iters, device=torch.device('cpu'), random_state=0):
+    env = LunarLander(random_state=random_state)
     config = LunarLanderConfig()
 
     memory = ReplayMemory(config.memory_config.memory_size)
     controller = ControllerDQN(env, memory, config, device=device)
     agent = Agent(env, controller, device=device)
 
-    for iter in tqdm(range(prune_iters)):
+    for iter in range(prune_iters):
         plot_data = list()
         pbar = tqdm(range(epochs))
         for epoch in pbar:
             reward, steps = agent.rollout(show=False)
-            pbar.set_description("Epoch [{}/{}]".format(epoch + 1, epochs))
+            pbar.set_description("Iter[{}/{}] Epoch [{}/{}]".format(iter + 1, prune_iters, epoch + 1, epochs))
             pbar.write("Reward: {:.3f}".format(reward))
             plot_data.append(reward)
             if controller.optimization_completed():
                 break
+        show_reward_plot(controller.stop_criterion.plot_data, avg_epochs=1)
 
         show_reward_plot(plot_data)
         torch.save(plot_data, "plots/LunarLander_iter" + str(iter) + "_prune" +
@@ -50,5 +53,11 @@ def create_parser():
 
 
 if __name__ == "__main__":
-   args = create_parser().parse_args() 
-   train(args.epochs, args.prune_iters, torch.device(args.device))
+    RANDOM_SEED = 179
+    torch.manual_seed(RANDOM_SEED)
+    torch.cuda.manual_seed_all(RANDOM_SEED)
+    np.random.seed(RANDOM_SEED)
+    random.seed(RANDOM_SEED)
+
+    args = create_parser().parse_args() 
+    train(args.epochs, args.prune_iters, torch.device(args.device), RANDOM_SEED)
