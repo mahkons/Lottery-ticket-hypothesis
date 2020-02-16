@@ -54,7 +54,6 @@ class ControllerDQN(nn.Module):
         if self.steps_done % self.target_net_update_steps == 0:
             self.hard_update()
         self.steps_done += 1
-        self.stop_criterion.update_mask(self.pruner.get_mask_to_prune(50))
         if len(self.memory) < self.batch_size:
             return
 
@@ -73,7 +72,7 @@ class ControllerDQN(nn.Module):
         self.optimizer.step()
 
     def optimization_completed(self):
-        #  self.stop_criterion.update_mask(self.pruner.get_mask_to_prune(50))
+        self.stop_criterion.update_mask(self.pruner.get_mask_to_prune(50))
         return self.stop_criterion()
 
     def prune(self, p):
