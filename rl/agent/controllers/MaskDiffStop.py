@@ -1,7 +1,7 @@
 from make_plots import show_reward_plot
 
 class MaskDiffStop():
-    def __init__(self, eps=0.02):
+    def __init__(self, eps=0.01):
         self.mask_dict = None
         self.stop = False
         self.eps = eps
