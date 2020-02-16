@@ -15,7 +15,7 @@ from pruners.GlobalPruner import GlobalPruner
 
 
 class ControllerDQN(nn.Module):
-    def __init__(self, env, memory, params, device=torch.device('cpu')):
+    def __init__(self, env, memory, params, prune_percent=20, device=torch.device('cpu')):
         super(ControllerDQN, self).__init__()
         self.state_sz = env.state_sz
         self.action_sz = env.action_sz
@@ -33,6 +33,7 @@ class ControllerDQN(nn.Module):
         self.net = DQN(self.state_sz, self.action_sz, params.layers_sz).to(device)
         self.target_net = DQN(self.state_sz, self.action_sz, params.layers_sz).to(device)
 
+        self.prune_percent = prune_percent
         self.pruner = LayerwisePruner(self.net, self.device)
         self.stop_criterion = MaskDiffStop()
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=params.optimizer_config.lr)
@@ -72,11 +73,11 @@ class ControllerDQN(nn.Module):
         self.optimizer.step()
 
     def optimization_completed(self):
-        self.stop_criterion.update_mask(self.pruner.get_mask_to_prune(50))
+        self.stop_criterion.update_mask(self.pruner.get_mask_to_prune(self.prune_percent))
         return self.stop_criterion()
 
-    def prune(self, p):
-        self.pruner.prune_net(p)
+    def prune(self):
+        self.pruner.prune_net(self.prune_percent)
 
     def reinit(self):
         self.memory.clean()

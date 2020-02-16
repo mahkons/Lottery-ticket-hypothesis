@@ -3,6 +3,7 @@ import numpy as np
 from tqdm import tqdm
 import argparse
 import random
+import os
 
 from agent.Agent import Agent
 from agent.memory.ReplayMemory import ReplayMemory
@@ -21,7 +22,7 @@ def train(epochs, prune_iters, device=torch.device('cpu'), random_state=0):
     config = LunarLanderConfig()
 
     memory = ReplayMemory(config.memory_config.memory_size)
-    controller = ControllerDQN(env, memory, config, device=device)
+    controller = ControllerDQN(env, memory, config, prune_percent=20, device=device)
     agent = Agent(env, controller, device=device)
 
     for iter in range(prune_iters):
@@ -30,17 +31,17 @@ def train(epochs, prune_iters, device=torch.device('cpu'), random_state=0):
         for epoch in pbar:
             reward, steps = agent.rollout(show=False)
             pbar.set_description("Iter[{}/{}] Epoch [{}/{}]".format(iter + 1, prune_iters, epoch + 1, epochs))
-            pbar.write("Reward: {:.3f}".format(reward))
+            #  pbar.write("Reward: {:.3f}".format(reward))
             plot_data.append(reward)
-            if controller.optimization_completed():
+            if controller.optimization_completed() and not iter + 1 == prune_iters: # no stop on last iteration
                 break
-        show_reward_plot(controller.stop_criterion.plot_data, avg_epochs=1)
 
         show_reward_plot(plot_data)
         torch.save(plot_data, "plots/LunarLander_iter" + str(iter) + "_prune" +
                 str(0.8 ** iter))
 
-        controller.prune(20)
+        
+        controller.prune()
         controller.reinit()
 
 
