@@ -2,10 +2,20 @@
 This repository contains an implementation of the article [Lottery Ticket Hypothesis](https://arxiv.org/abs/1803.03635)  
 And an application of this hypothesis to reinforcement learning
  - Supervised 
-    - [x] Implement iterative magnitude pruning
-    - [ ] Test using net VGG19 and dataset CIFAR10
- - Reinforcement learning
-    - [ ] ?
+    - [x] Implement iterative magnitude pruning (IMP)  
+    - [x] Test using toy net and dataset CIFAR10  
+    - [ ] Test using VGG19 net and dataset CIFAR10  
+    - [ ] Make it fast  
+ - Reinforcement learning  
+    - [x] Implement DQN  
+    - [x] Test on classic gym environments (CartPole, LunarLander)   
+    - [x] Try IMP (layerwise/global) with DQN on classic problems  
+    - [ ] Analyze the specifics of applying Lottery ticket to DQN (e.g. target function updates)  
+    - [ ] Try different early-stop techniques  
+    - [ ] Dynamic epochs?  
+    - [ ] DDPG? Dueling networks? Different RL architecures...  
+    - [ ] Atari games?  
+    - [ ] Compare with [Lottery tickets in RL and NLP](https://arxiv.org/abs/1906.02768) article?  
 
 # Related articles
 - Rewinding technique and stability analysis:  
