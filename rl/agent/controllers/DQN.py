@@ -10,8 +10,7 @@ from agent.stop_criterions import NoStop, MaskDiffStop, EarlyBirdStop
 
 from agent.memory.ReplayMemory import Transition
 from networks.DQN import DQN
-from pruners.LayerwisePruner import LayerwisePruner
-from pruners.GlobalPruner import GlobalPruner
+from pruners import LayerwisePruner, GlobalPruner
 
 
 class ControllerDQN(nn.Module):

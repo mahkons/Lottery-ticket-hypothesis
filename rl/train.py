@@ -10,10 +10,7 @@ from agent.memory.ReplayMemory import ReplayMemory
 from agent.controllers.DQN import ControllerDQN
 from make_plots import show_reward_plot
 
-from envs.CartPole import CartPole
-from envs.MountainCar import MountainCar
-from envs.LunarLander import LunarLander
-
+from envs import CartPole, MountainCar, LunarLander
 from params import CartPoleConfig, LunarLanderConfig
 
 
@@ -59,6 +56,9 @@ if __name__ == "__main__":
     torch.cuda.manual_seed_all(RANDOM_SEED)
     np.random.seed(RANDOM_SEED)
     random.seed(RANDOM_SEED)
+
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
     args = create_parser().parse_args() 
     train(args.epochs, args.prune_iters, torch.device(args.device), RANDOM_SEED)

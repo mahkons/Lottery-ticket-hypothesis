@@ -1,6 +1,4 @@
-from configs.DQNConfig import DQNConfig
-from configs.ReplayMemoryConfig import ReplayMemoryConfig
-from configs.AdamConfig import AdamConfig
+from configs import DQNConfig, ReplayMemoryConfig, AdamConfig
 
 def CartPoleConfig():
     return DQNConfig(
