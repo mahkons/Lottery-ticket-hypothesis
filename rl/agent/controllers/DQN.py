@@ -6,9 +6,7 @@ import torch.optim
 import math
 import random
 
-from agent.controllers.NoStop import NoStop
-from agent.controllers.MaskDiffStop import MaskDiffStop
-from agent.controllers.EarlyBirdStop import EarlyBirdStop
+from agent.stop_criterions import NoStop, MaskDiffStop, EarlyBirdStop
 
 from agent.memory.ReplayMemory import Transition
 from networks.DQN import DQN
