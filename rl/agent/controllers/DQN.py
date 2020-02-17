@@ -39,13 +39,13 @@ class ControllerDQN(nn.Module):
 
         self.steps_done = 0
 
-    def select_action(self, state):
+    def select_action(self, state, explore):
         eps_threshold = self.eps_end + (self.eps_start - self.eps_end) * math.exp(-1. * self.steps_done / self.eps_decay)
-        if random.random() > eps_threshold:
+        if explore and random.random() < eps_threshold:
+            return random.randrange(self.action_sz)
+        else:
             with torch.no_grad():
                 return self.net(state).max(1)[1].item()
-        else:
-            return random.randrange(self.action_sz)
 
     def hard_update(self):
         self.target_net.load_state_dict(self.net.state_dict())
@@ -53,7 +53,9 @@ class ControllerDQN(nn.Module):
     def optimize(self):
         if self.steps_done % self.target_net_update_steps == 0:
             self.hard_update()
+            self.stop_criterion.update_mask(self.pruner.get_mask_to_prune(self.prune_percent))
         self.steps_done += 1
+
         if len(self.memory) < self.batch_size:
             return
 
@@ -72,7 +74,6 @@ class ControllerDQN(nn.Module):
         self.optimizer.step()
 
     def optimization_completed(self):
-        self.stop_criterion.update_mask(self.pruner.get_mask_to_prune(self.prune_percent))
         return self.stop_criterion()
 
     def prune(self):

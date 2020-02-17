@@ -26,7 +26,7 @@ def train(epochs, prune_iters, device=torch.device('cpu'), random_state=0):
         plot_data = list()
         pbar = tqdm(range(epochs))
         for epoch in pbar:
-            reward, steps = agent.rollout(show=False)
+            reward, steps = agent.rollout(train=True, show=False)
             pbar.set_description("Iter[{}/{}] Epoch [{}/{}]".format(iter + 1, prune_iters, epoch + 1, epochs))
             #  pbar.write("Reward: {:.3f}".format(reward))
             plot_data.append(reward)
