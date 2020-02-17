@@ -14,7 +14,7 @@ from envs import CartPole, MountainCar, LunarLander
 from params import CartPoleConfig, LunarLanderConfig
 
 
-def train(epochs, prune_iters, device=torch.device('cpu'), random_state=0):
+def train(episodes, prune_iters, device=torch.device('cpu'), random_state=0):
     env = LunarLander(random_state=random_state)
     config = LunarLanderConfig()
 
@@ -24,11 +24,12 @@ def train(epochs, prune_iters, device=torch.device('cpu'), random_state=0):
 
     for iter in range(prune_iters):
         plot_data = list()
-        pbar = tqdm(range(epochs))
-        for epoch in pbar:
-            reward, steps = agent.rollout(train=True, show=False)
-            pbar.set_description("Iter[{}/{}] Epoch [{}/{}]".format(iter + 1, prune_iters, epoch + 1, epochs))
-            #  pbar.write("Reward: {:.3f}".format(reward))
+        pbar = tqdm(range(episodes))
+        for episode in pbar:
+            pbar.set_description("Iter[{}/{}] Episode [{}/{}]".format(iter + 1, prune_iters, episode + 1, episodes))
+
+            agent.rollout(train=False)
+            reward, steps = agent.rollout(train=True)
             plot_data.append(reward)
             if controller.optimization_completed() and not iter + 1 == prune_iters: # no stop on last iteration
                 break
@@ -44,7 +45,7 @@ def train(epochs, prune_iters, device=torch.device('cpu'), random_state=0):
 
 def create_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--epochs', type=int, default=1000, required=False)
+    parser.add_argument('--episodes', type=int, default=1000, required=False)
     parser.add_argument('--prune-iters', type=int, default=1, required=False)
     parser.add_argument('--device', type=str, default='cpu', required=False)
     return parser
@@ -61,4 +62,4 @@ if __name__ == "__main__":
     torch.backends.cudnn.benchmark = False
 
     args = create_parser().parse_args() 
-    train(args.epochs, args.prune_iters, torch.device(args.device), RANDOM_SEED)
+    train(args.episodes, args.prune_iters, torch.device(args.device), RANDOM_SEED)
