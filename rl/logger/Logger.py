@@ -32,7 +32,21 @@ class Logger():
         self.save_tensorboard()
 
     def save_csv(self):
-        pass
+        plot_path = os.path.join(self.dir, "plots")
+        os.mkdir(plot_path)
+        for plot_name, plot_data in self.plots.items():
+            with open(os.path.join(plot_path, plot_name + ".csv"), "w+", newline='') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow(("train_episode", "train_steps", "reward"))
+                writer.writerows(plot_data)
+
+
+        params_path = os.path.join(self.dir, "params.csv")
+        with open(params_path, "w+", newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(("name", "value"))
+            writer.writerows(self.params.items())
+
 
     def save_tensorboard(self):
         pass

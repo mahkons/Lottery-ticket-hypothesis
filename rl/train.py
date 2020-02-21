@@ -31,7 +31,7 @@ def exploit(agent, train_episode, plot_name):
 def train(episodes, prune_iters, prune_percent, device=torch.device('cpu'), random_state=0):
     env = LunarLander(random_state=random_state)
     config = LunarLanderConfig()
-    logger.update_params(config.__dict__)
+    logger.update_params(config.to_dict())
 
     memory = ReplayMemory(config.memory_config.memory_size)
     controller = ControllerDQN(env, memory, config, prune_percent=prune_percent, device=device)

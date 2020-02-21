@@ -43,14 +43,4 @@ def show_reward_steps_plot(plot_data, title="reward-steps plot", avg_epochs=1):
 
 
 if __name__ == "__main__":
-    plot = go.Figure()
-
-    paths = list()
-    for _, _, files in walk("plots/"):
-        paths += files
-
-    for path in paths:
-        plot_data = torch.load("plots/" + path)
-        add_avg_trace(plot, np.arange(len(plot_data)), plot_data, path)
-
-    plot.show()
+    pass
