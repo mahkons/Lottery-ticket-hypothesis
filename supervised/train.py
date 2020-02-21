@@ -56,7 +56,7 @@ def iterative_pruning(model, iters, device):
 def train_no_pruning(model, epochs, device):
     trainloader = load_train_data(batch_size=4)
     criterion = nn.CrossEntropyLoss()
-    optimizer = SGD(model.parameters(), lr=0.001, momentum=0.9)
+    optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
     plot_data = train(trainloader, epochs, model, optimizer, criterion, device)
     return plot_data
