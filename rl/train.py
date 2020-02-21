@@ -28,8 +28,8 @@ def train(episodes, prune_iters, device=torch.device('cpu'), random_state=0):
         for episode in pbar:
             pbar.set_description("Iter[{}/{}] Episode [{}/{}]".format(iter + 1, prune_iters, episode + 1, episodes))
 
-            agent.rollout(train=False)
-            reward, steps = agent.rollout(train=True)
+            reward, steps = agent.rollout(train=False)
+            agent.rollout(train=True)
             plot_data.append(reward)
             if controller.optimization_completed() and not iter + 1 == prune_iters: # no stop on last iteration
                 break
