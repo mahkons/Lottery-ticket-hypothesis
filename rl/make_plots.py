@@ -9,7 +9,7 @@ import numpy as np
 def add_trace(plot, x, y, name):
     plot.add_trace(go.Scatter(x=x, y=y, name=name))
 
-def add_avg_trace(plot, x, y, name, avg_epochs=100):
+def add_avg_trace(plot, x, y, name="", avg_epochs=100):
     ny = list()
     cur_val = y[0]
     for i in range(len(y)):
@@ -19,12 +19,25 @@ def add_avg_trace(plot, x, y, name, avg_epochs=100):
 
     add_trace(plot, x, ny, name)
 
-def show_reward_plot(plot_data, name="reward plot", avg_epochs=100):
+def show_reward_plot(plot_data, title="reward-episode plot", avg_epochs=1):
     plot = go.Figure()
+    plot.update_layout(title=title)
+    train_episodes, steps, rewards = zip(*plot_data)
 
-    y = np.array(plot_data)
-    x = np.arange(len(y))
-    add_avg_trace(plot, x, y, name, avg_epochs)
+    y = np.array(rewards)
+    x = np.array(train_episodes)
+    add_avg_trace(plot, x, y, avg_epochs)
+
+    plot.show()
+
+def show_reward_steps_plot(plot_data, title="reward-steps plot", avg_epochs=1):
+    plot = go.Figure()
+    plot.update_layout(title=title)
+    train_episodes, steps, rewards = zip(*plot_data)
+
+    y = np.array(rewards)
+    x = np.array(steps)
+    add_avg_trace(plot, x, y, avg_epochs)
 
     plot.show()
 

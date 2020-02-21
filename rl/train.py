@@ -8,7 +8,7 @@ import os
 from agent.Agent import Agent
 from agent.memory.ReplayMemory import ReplayMemory
 from agent.controllers.DQN import ControllerDQN
-from make_plots import show_reward_plot
+from make_plots import show_reward_plot, show_reward_steps_plot
 from logger.Logger import Logger
 
 from envs import CartPole, MountainCar, LunarLander
@@ -16,6 +16,16 @@ from params import CartPoleConfig, LunarLanderConfig
 
 
 logger = Logger("logdir")
+
+
+def explore(agent, train_episode, plot_name):
+    reward, steps = agent.rollout(train=True)
+    logger.add_plot_point(plot_name, (train_episode, agent.controller.steps_done, reward))
+
+
+def exploit(agent, train_episode, plot_name):
+    reward, steps = agent.rollout(train=False)
+    logger.add_plot_point(plot_name, (train_episode, agent.controller.steps_done, reward))
 
 
 def train(episodes, prune_iters, prune_percent, device=torch.device('cpu'), random_state=0):
@@ -27,24 +37,33 @@ def train(episodes, prune_iters, prune_percent, device=torch.device('cpu'), rand
     controller = ControllerDQN(env, memory, config, prune_percent=prune_percent, device=device)
     agent = Agent(env, controller, device=device)
 
-    for iter in range(prune_iters):
-        plot_data = list()
-        pbar = tqdm(range(episodes))
-        for episode in pbar:
-            pbar.set_description("Iter[{}/{}] Episode [{}/{}]".format(iter + 1, prune_iters, episode + 1, episodes))
+    EXPLORE_ITERS = 1
+    EXPLOIT_ITERS = 1
 
-            reward, _ = agent.rollout(train=False)
-            agent.rollout(train=True)
-            
-            plot_data.append(reward)
+    for iter in range(prune_iters):
+        pbar = tqdm(range(episodes))
+        cur_percent = (1 - prune_percent / 100) ** iter
+        explore_plot = "Explore_iter" + str(iter) + "_prune" + str(cur_percent)
+        exploit_plot = "Exploit_iter" + str(iter) + "_prune" + str(cur_percent)
+        logger.add_plot(explore_plot)
+        logger.add_plot(exploit_plot)
+
+        for episode in pbar:
+            # once in EXPLORE_ITERS train rollouts, do EXPLOIT_ITERS exploit rollouts
+            if episode % EXPLORE_ITERS == EXPLORE_ITERS - 1:
+                for _ in range(EXPLOIT_ITERS):
+                    pbar.set_description("Iter[{}/{}] Episode [{}/{}] Exploit"
+                            .format(iter + 1, prune_iters, episode + 1, episodes))
+                    exploit(agent, episode, exploit_plot)
+
+            pbar.set_description("Iter[{}/{}] Episode [{}/{}] Explore"
+                    .format(iter + 1, prune_iters, episode + 1, episodes))
+            explore(agent, episode, explore_plot)
+                
             if controller.optimization_completed() and not iter + 1 == prune_iters: # no stop on last iteration
                 break
 
-        show_reward_plot(plot_data)
-        torch.save(plot_data, "plots/LunarLander_iter" + str(iter) + "_prune" +
-                str(0.8 ** iter))
-
-        
+        show_reward_plot(logger.get_plot(exploit_plot), title=exploit_plot, avg_epochs=100)
         controller.prune()
         controller.reinit()
 
@@ -70,8 +89,14 @@ def init_random_seeds(RANDOM_SEED, cuda_determenistic):
 
 
 if __name__ == "__main__":
-    init_random_seeds(179, cuda_determenistic=True)
+    RANDOM_SEED = 179
+    init_random_seeds(RANDOM_SEED, cuda_determenistic=True)
 
     args = create_parser().parse_args() 
     logger.update_params(args.__dict__)
-    train(args.episodes, args.prune_iters, args.prune_percent, torch.device(args.device), RANDOM_SEED)
+
+    try:
+        train(args.episodes, args.prune_iters, args.prune_percent, torch.device(args.device), RANDOM_SEED)
+    finally:
+        logger.save_logs()
+
