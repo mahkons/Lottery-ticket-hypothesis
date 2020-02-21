@@ -34,7 +34,7 @@ class ControllerDQN(nn.Module):
 
         self.prune_percent = prune_percent
         self.pruner = LayerwisePruner(self.net, self.device)
-        self.stop_criterion = EarlyBirdStop()
+        self.stop_criterion = MaskDiffStop(eps=0)
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=params.optimizer_config.lr)
 
         self.steps_done = 0

@@ -8,6 +8,8 @@ class EarlyBirdStop():
         self.stop = False
         self.eps = eps
 
+        self.plot_data = list()
+
     def calc_diff(self, mask1, mask2):
         sum_diff = 0
         for key in mask1:
@@ -27,6 +29,8 @@ class EarlyBirdStop():
 
         if max_diff < self.eps * cur_sum:
             self.stop = True
+
+        self.plot_data.append(max_diff)
 
     def __call__(self):
         return self.stop
