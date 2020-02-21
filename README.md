@@ -26,6 +26,8 @@ And an application of this hypothesis to reinforcement learning
 [Drawing early-bird tickets](https://arxiv.org/abs/1909.11957)
 
 ### Something to read later
+https://arxiv.org/abs/1705.07565  
+https://arxiv.org/abs/1711.02017  
 https://arxiv.org/abs/1810.02054   
 https://arxiv.org/abs/1810.05270  
 https://arxiv.org/abs/1905.01067  
