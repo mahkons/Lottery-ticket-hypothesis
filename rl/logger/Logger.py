@@ -1,6 +1,8 @@
 import pandas as pd
 import datetime
 import os
+import numpy as np
+from tensorboardX import SummaryWriter
 
 
 class Logger():
@@ -8,9 +10,13 @@ class Logger():
         self.logdir = logdir
         
         assert(os.path.isdir(logdir))
-        filename = "log_" + datetime.datetime.now().isoformat()
-        self.dir = os.path.join(logdir, filename)
+        dir = "log_" + datetime.datetime.now().isoformat()
+        self.dir = os.path.join(logdir, dir)
         os.mkdir(self.dir)
+
+        self.tensorboard_dir = os.path.join(self.dir, "tensorboard")
+        os.mkdir(self.tensorboard_dir)
+        self.tensorboard_writer = SummaryWriter(self.tensorboard_dir)
 
         self.params = dict()
         self.plots = dict()
@@ -42,4 +48,9 @@ class Logger():
         pd.DataFrame(self.params.items(), columns=("name", "value")).to_csv(params_path)
 
     def save_tensorboard(self):
-        pass
+        self.tensorboard_writer.add_hparams(self.params, {})
+        for plot_name, plot_data in self.plots.items():
+            for i in range(len(plot_data)):
+                self.tensorboard_writer.add_scalar(plot_name, np.asarray(plot_data[i][2]), i)
+
+        self.tensorboard_writer.close()

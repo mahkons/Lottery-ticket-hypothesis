@@ -19,7 +19,7 @@ def add_avg_trace(plot, x, y, name="", avg_epochs=100):
 
     add_trace(plot, x, ny, name)
 
-def show_reward_plot(plot_data, title="reward-episode plot", avg_epochs=1):
+def create_reward_plot(plot_data, title="reward-episode plot", avg_epochs=1):
     plot = go.Figure()
     plot.update_layout(title=title)
     train_episodes, steps, rewards = zip(*plot_data)
@@ -28,9 +28,9 @@ def show_reward_plot(plot_data, title="reward-episode plot", avg_epochs=1):
     x = np.array(train_episodes)
     add_avg_trace(plot, x, y, avg_epochs)
 
-    plot.show()
+    return plot
 
-def show_reward_steps_plot(plot_data, title="reward-steps plot", avg_epochs=1):
+def create_reward_steps_plot(plot_data, title="reward-steps plot", avg_epochs=1):
     plot = go.Figure()
     plot.update_layout(title=title)
     train_episodes, steps, rewards = zip(*plot_data)
@@ -39,7 +39,7 @@ def show_reward_steps_plot(plot_data, title="reward-steps plot", avg_epochs=1):
     x = np.array(steps)
     add_avg_trace(plot, x, y, avg_epochs)
 
-    plot.show()
+    return plot
 
 
 if __name__ == "__main__":
