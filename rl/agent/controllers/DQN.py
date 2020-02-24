@@ -70,8 +70,8 @@ class ControllerDQN(nn.Module):
 
         self.optimizer.zero_grad()
         loss.backward()
-        self.pruner.optimization_step()
         self.optimizer.step()
+        self.pruner.optimization_step()
 
     def optimization_completed(self):
         return self.stop_criterion()

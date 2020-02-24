@@ -19,11 +19,15 @@ class Pruner():
             param.data[~self.mask[name]] = 0
 
     def optimization_step(self):
-        self.zero_unmasked_grad()
+        self.zero_unmasked()
 
     def zero_unmasked_grad(self):
         for name, param in self.net.named_parameters():
             param.grad.data[~self.mask[name]] = 0
+
+    def zero_unmasked(self):
+        for name, param in self.net.named_parameters():
+            param.data[~self.mask[name]] = 0
 
     def get_current_mask(self):
         return self.mask

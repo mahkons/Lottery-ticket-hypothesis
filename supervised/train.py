@@ -26,9 +26,8 @@ def train(dataloader, epochs, model, optimizer, criterion, device):
 
             optimizer.zero_grad()
             loss.backward()
-            #  model.zero_unmasked_grad()
-            with torch.no_grad():
-                optimizer.step()
+            optimizer.step()
+            model.zero_unmasked()
 
             plot_data.append(loss.item())
             running_loss += loss.item()
@@ -73,8 +72,8 @@ if __name__ == "__main__":
     args = create_parser().parse_args()
     device = torch.device(args.device)
 
-    #  wrapper = PruningWrapper(SimpleNet(), device)
-    wrapper = SimpleNet().to(device)
+    wrapper = PruningWrapper(SimpleNet(), device)
+    #  wrapper = SimpleNet().to(device)
     #  wrapper = PruningWrapper.load_model(SimpleNet, "generated/" + SimpleNet.__name__, device)
 
     #  iterative_pruning(wrapper, args.pruning_iters, device)

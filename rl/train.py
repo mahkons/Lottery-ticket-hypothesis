@@ -65,7 +65,7 @@ def train(episodes, prune_iters, prune_percent, device=torch.device('cpu'), rand
 
         create_reward_plot(logger.get_plot(exploit_plot), title=exploit_plot, avg_epochs=100).show()
         controller.prune()
-        #  controller.reinit()
+        controller.reinit()
 
 
 def create_parser():

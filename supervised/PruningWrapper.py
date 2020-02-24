@@ -21,6 +21,10 @@ class PruningWrapper():
         for name, param in self.net.named_parameters():
             param.grad.data *= self.mask[name]
 
+    def zero_unmasked(self):
+        for name, param in self.net.named_parameters():
+            param.data *= self.mask[name]
+
     def prune_net(self, p):
         for name, param in self.net.named_parameters():
             if not "weight" in name:
