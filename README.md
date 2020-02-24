@@ -29,6 +29,7 @@ And an application of this hypothesis to reinforcement learning
 ### Something to read later
 https://papers.nips.cc/paper/647-second-order-derivatives-for-network-pruning-optimal-brain-surgeon  
 https://arxiv.org/abs/1506.02626  
+https://arxiv.org/abs/1608.04493  
 https://arxiv.org/abs/1705.07565  
 https://arxiv.org/abs/1711.02017  
 https://arxiv.org/abs/1810.02054   
