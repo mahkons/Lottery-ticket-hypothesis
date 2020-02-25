@@ -26,7 +26,7 @@ def create_reward_plot(plot_data, title="reward-episode plot", avg_epochs=1):
 
     y = np.array(rewards)
     x = np.array(train_episodes)
-    add_avg_trace(plot, x, y, avg_epochs)
+    add_avg_trace(plot, x, y, avg_epochs=avg_epochs)
 
     return plot
 
@@ -37,7 +37,7 @@ def create_reward_steps_plot(plot_data, title="reward-steps plot", avg_epochs=1)
 
     y = np.array(rewards)
     x = np.array(steps)
-    add_avg_trace(plot, x, y, avg_epochs)
+    add_avg_trace(plot, x, y, avg_epochs=avg_epochs)
 
     return plot
 

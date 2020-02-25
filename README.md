@@ -26,19 +26,19 @@ And an application of this hypothesis to reinforcement learning
 [Drawing early-bird tickets](https://arxiv.org/abs/1909.11957)
 
 
-### Something to read later
-https://papers.nips.cc/paper/647-second-order-derivatives-for-network-pruning-optimal-brain-surgeon  
-https://arxiv.org/abs/1506.02626  
-https://arxiv.org/abs/1608.04493  
-https://arxiv.org/abs/1705.07565  
-https://arxiv.org/abs/1711.02017  
-https://arxiv.org/abs/1810.02054   
-https://arxiv.org/abs/1810.05270  
-https://arxiv.org/abs/1905.01067  
-https://arxiv.org/abs/1907.04840  
-https://arxiv.org/abs/2001.05050  
-https://arxiv.org/abs/2002.00585  
-https://arxiv.org/abs/2002.03875  
+### More or less related
+[Optimal Brain Surgeon](https://papers.nips.cc/paper/647-second-order-derivatives-for-network-pruning-optimal-brain-surgeon)--second derivatives  
+[Learning both Weights and Connections](https://arxiv.org/abs/1506.02626)--prune + tune  
+[Dynamic Network Surgery](https://arxiv.org/abs/1608.04493)--parameter importance + grow pruned?  
+[Layerwise Optimal Brain Surgeon](https://arxiv.org/abs/1705.07565)--layerwise second derivatives  
+[Grow and Prune Tool](https://arxiv.org/abs/1711.02017)--??  
+[Overparametrized networks provably optimized](https://arxiv.org/abs/1810.02054)--gradient descent on overparametrized networks  
+[Rethinking the Value of Network Pruning](https://arxiv.org/abs/1810.05270)--structured with random reinit  
+[Deconstructing Lottery Tickets](https://arxiv.org/abs/1905.01067)--lottery ticket signs + supermasks  
+[Sparse Networks from Scratch](https://arxiv.org/abs/1907.04840)--sparse momentum  
+[On Iterative Neural Network Pruning](https://arxiv.org/abs/2001.05050)--pruning methods summary  
+[Proving the Lottery Ticket](https://arxiv.org/abs/2002.00585)--??  
+[Improving Reliability of Lottery Tickets](https://arxiv.org/abs/2002.03875)--??  
 
 ### Is it possible to make it fast?
 https://arxiv.org/abs/1602.01528   
