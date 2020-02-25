@@ -8,7 +8,7 @@ import argparse
 from load_data import load_train_data
 from networks.SimpleNet import SimpleNet
 from networks.VGG19 import vgg19
-from PruningWrapper import PruningWrapper
+from PruningWrapper import PruningWrapper, RescalingPruningWrapper
 
 from networks.SGD import SGD
 
@@ -72,11 +72,12 @@ if __name__ == "__main__":
     args = create_parser().parse_args()
     device = torch.device(args.device)
 
-    wrapper = PruningWrapper(SimpleNet(), device)
+    wrapper = RescalingPruningWrapper(SimpleNet(), device)
+    #  wrapper = PruningWrapper(SimpleNet(), device)
     #  wrapper = SimpleNet().to(device)
     #  wrapper = PruningWrapper.load_model(SimpleNet, "generated/" + SimpleNet.__name__, device)
 
-    #  iterative_pruning(wrapper, args.pruning_iters, device)
+    iterative_pruning(wrapper, args.pruning_iters, device)
     plot_data = train_no_pruning(wrapper, 1, device)
     torch.save(plot_data, "plots/%.3f" % ((0.8 ** args.pruning_iters)*100))
 
