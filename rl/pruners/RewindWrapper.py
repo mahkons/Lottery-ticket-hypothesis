@@ -12,6 +12,7 @@ class RewindWrapper():
         self.pruner_epoch += 1
         if self.pruner_epoch == self.reinit_epochs:
             self.pruner.update_init_state()
+        self.pruner.epoch_step()
 
     def reinit_net(self):
         # do not update pruner_epoch
