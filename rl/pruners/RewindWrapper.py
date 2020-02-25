@@ -16,7 +16,7 @@ class RewindWrapper():
 
     def reinit_net(self):
         # do not update pruner_epoch
-        # rewind only once
+        # rewind always to same epoch
         self.pruner.reinit_net()
 
     def optimization_step(self):

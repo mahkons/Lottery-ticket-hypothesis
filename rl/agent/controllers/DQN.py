@@ -10,7 +10,7 @@ from agent.stop_criterions import NoStop, MaskDiffStop, EarlyBirdStop
 
 from agent.memory.ReplayMemory import Transition
 from networks.DQN import DQN
-from pruners import LayerwisePruner, GlobalPruner, RewindWrapper
+from pruners import LayerwisePruner, GlobalPruner, RewindWrapper, RescalingGlobalPruner, RescalingLayerwisePruner
 
 
 class ControllerDQN(nn.Module):
@@ -50,6 +50,19 @@ class ControllerDQN(nn.Module):
     def hard_update(self):
         self.target_net.load_state_dict(self.net.state_dict())
 
+
+    def calc_loss(self):
+        state, action, next_state, reward, done = self.memory.sample(self.batch_size)
+
+        state_action_values = self.net(state).gather(1, action.unsqueeze(1))
+        with torch.no_grad():
+            next_values = self.target_net(next_state).max(1)[0]
+            expected_state_action_values = (next_values * self.gamma) * (1 - done) + reward
+
+        loss = F.smooth_l1_loss(state_action_values.squeeze(1), expected_state_action_values)
+
+        return loss
+
     def optimize(self):
         if self.steps_done % self.target_net_update_steps == 0:
             self.hard_update()
@@ -60,14 +73,7 @@ class ControllerDQN(nn.Module):
         if len(self.memory) < self.batch_size:
             return
 
-        state, action, next_state, reward, done = self.memory.sample(self.batch_size)
-
-        state_action_values = self.net(state).gather(1, action.unsqueeze(1))
-        with torch.no_grad():
-            next_values = self.target_net(next_state).max(1)[0]
-            expected_state_action_values = (next_values * self.gamma) * (1 - done) + reward
-
-        loss = F.smooth_l1_loss(state_action_values.squeeze(1), expected_state_action_values)
+        loss = self.calc_loss()
 
         self.optimizer.zero_grad()
         loss.backward()
@@ -85,8 +91,10 @@ class ControllerDQN(nn.Module):
         self.steps_done = 0
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=self.params.optimizer_config.lr)
         self.stop_criterion.reset()
-        self.pruner.reinit_net()
+
+        # Next iteration target net will start with cool parameters
         self.hard_update()
+        self.pruner.reinit_net()
 
     def save_model(self, path):
         torch.save(self, path)
