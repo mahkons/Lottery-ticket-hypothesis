@@ -21,11 +21,13 @@ And an application of this hypothesis to reinforcement learning
 
 # Related articles
 - Rewinding technique and stability analysis:  
-[Stabilizing the Lottery Ticket Hypothesis](https://arxiv.org/abs/1903.01611), [Linear mode connectivity and the lottery ticket hypothesis](https://arxiv.org/abs/1912.05671)
+[Stabilizing the Lottery Ticket Hypothesis](https://arxiv.org/abs/1903.01611), [Linear mode connectivity and the lottery ticket hypothesis](https://arxiv.org/abs/1912.05671)  
 - Application of hypothesis to reinforcement learning:  
-[Lottery tickets in RL and NLP](https://arxiv.org/abs/1906.02768)
+[Lottery tickets in RL and NLP](https://arxiv.org/abs/1906.02768)  
 - Early-bird lottery tickets:  
-[Drawing early-bird tickets](https://arxiv.org/abs/1909.11957)
+[Drawing early-bird tickets](https://arxiv.org/abs/1909.11957)  
+- Pruning in RL:  
+[Policy Pruning and Shrinking for Deep Reinforcement Learning](https://arxiv.org/abs/2001.05012)  
 
 
 ### More or less related
