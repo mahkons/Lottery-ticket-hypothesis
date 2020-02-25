@@ -50,7 +50,6 @@ class ControllerDQN(nn.Module):
     def hard_update(self):
         self.target_net.load_state_dict(self.net.state_dict())
 
-
     def calc_loss(self):
         state, action, next_state, reward, done = self.memory.sample(self.batch_size)
 

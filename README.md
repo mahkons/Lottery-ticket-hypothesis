@@ -12,12 +12,14 @@ And an application of this hypothesis to reinforcement learning
     - [x] Try IMP (layerwise/global) with DQN on classic problems  
     - [x] IMP with rewind
     - [x] Early stop criterions
+    - [x] Rescaling weight after reinit
     - [ ] Analyze the specifics of applying Lottery ticket to DQN (e.g. target function updates)  
     - [ ] Try different early-stop techniques  
     - [ ] Dynamic epochs?  
     - [ ] DDPG? Dueling networks? Different RL architecures...  
     - [ ] Atari games?  
-    - [ ] Compare with [Lottery tickets in RL and NLP](https://arxiv.org/abs/1906.02768) article?  
+    - [ ] Compare with other articles?
+    - [ ] Clean up this list  
 
 # Related articles
 - Rewinding technique and stability analysis:  
