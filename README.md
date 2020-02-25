@@ -10,6 +10,8 @@ And an application of this hypothesis to reinforcement learning
     - [x] Implement DQN  
     - [x] Test on classic gym environments (CartPole, LunarLander)   
     - [x] Try IMP (layerwise/global) with DQN on classic problems  
+    - [x] IMP with rewind
+    - [x] Early stop criterions
     - [ ] Analyze the specifics of applying Lottery ticket to DQN (e.g. target function updates)  
     - [ ] Try different early-stop techniques  
     - [ ] Dynamic epochs?  

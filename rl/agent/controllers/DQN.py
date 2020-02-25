@@ -10,7 +10,7 @@ from agent.stop_criterions import NoStop, MaskDiffStop, EarlyBirdStop
 
 from agent.memory.ReplayMemory import Transition
 from networks.DQN import DQN
-from pruners import LayerwisePruner, GlobalPruner
+from pruners import LayerwisePruner, GlobalPruner, RewindWrapper
 
 
 class ControllerDQN(nn.Module):
@@ -33,7 +33,7 @@ class ControllerDQN(nn.Module):
         self.target_net = DQN(self.state_sz, self.action_sz, params.layers_sz).to(device)
 
         self.prune_percent = prune_percent
-        self.pruner = LayerwisePruner(self.net, self.device)
+        self.pruner = RewindWrapper(LayerwisePruner(self.net, self.device), 0)
         self.stop_criterion = MaskDiffStop(eps=0)
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=params.optimizer_config.lr)
 
@@ -54,6 +54,7 @@ class ControllerDQN(nn.Module):
         if self.steps_done % self.target_net_update_steps == 0:
             self.hard_update()
             self.stop_criterion.update_mask(self.pruner.get_mask_to_prune(self.prune_percent))
+            self.pruner.epoch_step()
         self.steps_done += 1
 
         if len(self.memory) < self.batch_size:

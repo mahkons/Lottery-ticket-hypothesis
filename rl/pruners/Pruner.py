@@ -9,9 +9,12 @@ class Pruner():
 
         self.net_init_state = dict()
         self.mask = dict()
-        for name, param in net.named_parameters():
+        self.update_init_state()
+
+    def update_init_state(self):
+        for name, param in self.net.named_parameters():
             self.net_init_state[name] = param.data.clone().detach()
-            self.mask[name] = torch.ones(param.data.shape, dtype=torch.bool, device=device, requires_grad=False)
+            self.mask[name] = torch.ones(param.data.shape, dtype=torch.bool, device=self.device, requires_grad=False)
 
     def reinit_net(self):
         for name, param in self.net.named_parameters():
@@ -20,6 +23,9 @@ class Pruner():
 
     def optimization_step(self):
         self.zero_unmasked()
+
+    def epoch_step(self):
+        pass
 
     def zero_unmasked_grad(self):
         for name, param in self.net.named_parameters():
