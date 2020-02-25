@@ -19,7 +19,7 @@ class RewindWrapper():
         self.pruner.reinit_net()
 
     def optimization_step(self):
-        self.pruner.reinit_net()
+        self.pruner.optimization_step()
 
     def get_current_mask(self):
         return self.pruner.get_current_mask()
