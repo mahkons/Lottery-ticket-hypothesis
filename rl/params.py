@@ -16,7 +16,7 @@ def CartPoleConfig():
 
 def LunarLanderConfig():
     return DQNConfig(
-        memory_config = ReplayMemoryConfig(500000),
+        memory_config = ReplayMemoryConfig(100000),
         optimizer_config = AdamConfig(1e-3),
         batch_size = 64,
         gamma = 0.99,
