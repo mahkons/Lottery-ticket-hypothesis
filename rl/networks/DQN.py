@@ -12,7 +12,7 @@ class DQN(nn.Module):
         super(DQN, self).__init__()
     
         if image_input:
-            assert layers_sz is None, "layers configuration for image input is not enabled yet"
+            assert layers_sz == [0], "layers configuration for image input is not enabled yet"
             layers = self.create_atari_layers(action_sz)
         else:
             layers = self.create_linear_layers(state_sz, action_sz, layers_sz)

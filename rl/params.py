@@ -40,6 +40,6 @@ def AtariConfig():
         eps_end = 0.05,
         eps_decay = 5000,
         target_net_update_steps = 5000,
-        layers_sz = None,
+        layers_sz = [0], # tensorboardX fails to save with None or empty list hyperparam #TODO fix
         image_input = True,
     )
