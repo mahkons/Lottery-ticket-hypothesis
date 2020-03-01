@@ -11,8 +11,8 @@ from agent.controllers.DQN import ControllerDQN
 from make_plots import create_reward_plot, create_reward_steps_plot
 from logger.Logger import Logger
 
-from envs import CartPole, MountainCar, LunarLander
-from params import CartPoleConfig, LunarLanderConfig
+from envs import CartPole, LunarLander, Pong, Breakout
+from params import CartPoleConfig, LunarLanderConfig, AtariConfig
 
 
 logger = Logger("logdir")
@@ -28,7 +28,7 @@ def exploit(agent, train_episode, plot_name):
     logger.add_plot_point(plot_name, (train_episode, agent.controller.steps_done, reward))
 
 
-def train(episodes, prune_iters, prune_percent, device=torch.device('cpu'), random_state=0):
+def train(episodes, prune_iters, prune_percent, device, random_state):
     env = LunarLander(random_state=random_state)
     config = LunarLanderConfig()
     logger.update_params(config.to_dict())

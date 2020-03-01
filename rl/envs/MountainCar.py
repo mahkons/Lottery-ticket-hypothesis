@@ -1,6 +1,3 @@
-import torch
-import gym
-
 from envs.EnvWrapper import EnvWrapper
 
 class MountainCar(EnvWrapper):

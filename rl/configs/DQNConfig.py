@@ -11,7 +11,8 @@ class DQNConfig(Config):
             eps_end,
             eps_decay,
             target_net_update_steps,
-            layers_sz
+            layers_sz,
+            image_input
         ):
         super(DQNConfig, self).__init__()
         self.memory_config = memory_config
@@ -23,3 +24,4 @@ class DQNConfig(Config):
         self.eps_decay = eps_decay
         self.target_net_update_steps = target_net_update_steps
         self.layers_sz = layers_sz
+        self.image_input = image_input

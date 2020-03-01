@@ -29,8 +29,8 @@ class ControllerDQN(nn.Module):
         self.gamma = params.gamma
         self.target_net_update_steps = params.target_net_update_steps
 
-        self.net = DQN(self.state_sz, self.action_sz, params.layers_sz).to(device)
-        self.target_net = DQN(self.state_sz, self.action_sz, params.layers_sz).to(device)
+        self.net = DQN(self.state_sz, self.action_sz, params.layers_sz, params.image_input).to(device)
+        self.target_net = DQN(self.state_sz, self.action_sz, params.layers_sz, params.image_input).to(device)
 
         self.prune_percent = prune_percent
         self.pruner = RewindWrapper(LayerwisePruner(self.net, self.device), 0)
