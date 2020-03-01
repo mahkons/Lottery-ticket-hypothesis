@@ -15,6 +15,7 @@ build/
 generated/
 logdir/
 plots/
+reference_models/
 
 # data
 data/
