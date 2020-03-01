@@ -7,6 +7,7 @@ import argparse
 
 from load_data import load_test_data
 from networks.SimpleNet import SimpleNet
+from networks.VGG19 import VGG19, vgg19
 
 def test(net, criterion, device):
     testloader = load_test_data()
@@ -35,6 +36,6 @@ if __name__ == "__main__":
     args = create_parser().parse_args()
     device = torch.device(args.device)
 
-    net = SimpleNet().load_model("generated/" + SimpleNet.__name__).to(device)
+    net = vgg19().load_model("generated/" + VGG19.__name__).to(device)
     criterion = nn.CrossEntropyLoss()
     test(net, criterion, device)

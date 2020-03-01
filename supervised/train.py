@@ -47,7 +47,8 @@ def iterative_pruning(model, iters, epochs, device):
 
     for iter in tqdm(range(iters)):
         optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
-        train(trainloader, epochs, model, optimizer, criterion, device)
+        plot_data = train(trainloader, epochs, model, optimizer, criterion, device)
+        torch.save(plot_data, "plots/%.3f" % ((0.8 ** iter)*100))
         model.prune_net(20)
         model.reinit_net()
 
@@ -65,6 +66,7 @@ def create_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cpu', required=False)
     parser.add_argument('--pruning-iters', type=int, default=0, required=False)
+    parser.add_argument('--epochs', type=int, default=1, required=False)
     return parser
 
 
@@ -72,12 +74,9 @@ if __name__ == "__main__":
     args = create_parser().parse_args()
     device = torch.device(args.device)
 
-    wrapper = RescalingPruningWrapper(SimpleNet(), device)
-    #  wrapper = PruningWrapper(SimpleNet(), device)
-    #  wrapper = SimpleNet().to(device)
-    #  wrapper = PruningWrapper.load_model(SimpleNet, "generated/" + SimpleNet.__name__, device)
+    #  wrapper = RescalingPruningWrapper(vgg19(), device)
+    wrapper = PruningWrapper(vgg19(), device)
 
-    iterative_pruning(wrapper, args.pruning_iters, 20, device)
-    plot_data = train_no_pruning(wrapper, 20, device)
-    torch.save(plot_data, "plots/%.3f" % ((0.8 ** args.pruning_iters)*100))
+    iterative_pruning(wrapper, args.pruning_iters, args.epochs, device)
+    plot_data = train_no_pruning(wrapper, args.epochs, device)
 
