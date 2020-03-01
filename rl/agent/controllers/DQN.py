@@ -101,8 +101,9 @@ class ControllerDQN(nn.Module):
     def push_in_memory(self, state, action, next_state, reward, done):
         self.memory.push(state, action, next_state, reward, done)
 
-    @staticmethod
-    def load_model(path, *args, **kwargs):
-        cnt = torch.load(path)
-        cnt.to(cnt.device)
-        return cnt
+    def load_net(self, path):
+        self.net.load_state_dict(state_dict=torch.load(path))
+        self.hard_update()
+
+    def save_net(self, path):
+        torch.save(self.target_net.state_dict(), path)
