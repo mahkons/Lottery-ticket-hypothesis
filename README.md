@@ -42,6 +42,7 @@ And an application of this hypothesis to reinforcement learning
 [Rethinking the Value of Network Pruning](https://arxiv.org/abs/1810.05270)--structured with random reinit  
 [Deconstructing Lottery Tickets](https://arxiv.org/abs/1905.01067)--lottery ticket signs + supermasks  
 [Sparse Networks from Scratch](https://arxiv.org/abs/1907.04840)--sparse momentum  
+[Making All Tickets Winners](https://arxiv.org/pdf/1911.11134.pdf)--??
 [On Iterative Neural Network Pruning](https://arxiv.org/abs/2001.05050)--pruning methods summary  
 [Proving the Lottery Ticket](https://arxiv.org/abs/2002.00585)--??  
 [Improving Reliability of Lottery Tickets](https://arxiv.org/abs/2002.03875)--??  
