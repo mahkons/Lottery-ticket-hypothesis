@@ -12,7 +12,8 @@ class DQNConfig(Config):
             eps_decay,
             target_net_update_steps,
             layers_sz,
-            image_input
+            image_input,
+            best_model_path
         ):
         super(DQNConfig, self).__init__()
         self.memory_config = memory_config
@@ -25,3 +26,4 @@ class DQNConfig(Config):
         self.target_net_update_steps = target_net_update_steps
         self.layers_sz = layers_sz
         self.image_input = image_input
+        self.best_model_path = best_model_path

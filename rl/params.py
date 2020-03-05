@@ -12,6 +12,8 @@ def CartPoleConfig():
         target_net_update_steps = 500,
         layers_sz = [64],
         image_input = False,
+
+        best_model_path = "no:(",
     )
 
 
@@ -27,6 +29,8 @@ def LunarLanderConfig():
         target_net_update_steps = 5000,
         layers_sz = [256, 128],
         image_input = False,
+
+        best_model_path = "metrics/reference_models/LunarLander",
     )
 
 
@@ -42,4 +46,6 @@ def AtariConfig():
         target_net_update_steps = 5000,
         layers_sz = [0], # tensorboardX fails to save with None or empty list hyperparam #TODO fix
         image_input = True,
+
+        best_model_path = "no:(",
     )

@@ -42,5 +42,17 @@ def create_reward_steps_plot(plot_data, title="reward-steps plot", avg_epochs=1)
     return plot
 
 
+def create_metric_plot(plot_data, title="metric", avg_epochs=1):
+    plot = go.Figure()
+    plot.update_layout(title=title)
+
+    y = np.array(plot_data)
+    x = np.array(range(len(plot_data)))
+    add_avg_trace(plot, x, y, avg_epochs=avg_epochs)
+
+    return plot
+
+
+
 if __name__ == "__main__":
     pass

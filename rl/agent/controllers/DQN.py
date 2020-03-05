@@ -7,10 +7,10 @@ import math
 import random
 
 from agent.stop_criterions import NoStop, MaskDiffStop, EarlyBirdStop
-
 from agent.memory.ReplayMemory import Transition
 from networks.DQN import DQN
 from pruners import LayerwisePruner, GlobalPruner, RewindWrapper, RescalingGlobalPruner, RescalingLayerwisePruner
+from metrics import MetricsDict
 
 
 class ControllerDQN(nn.Module):
@@ -38,6 +38,10 @@ class ControllerDQN(nn.Module):
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=params.optimizer_config.lr)
 
         self.steps_done = 0
+
+        self.metrics = MetricsDict(set(("qerror",)))
+        self.best_net = DQN(self.state_sz, self.action_sz, params.layers_sz, params.image_input).to(device)
+        self.best_net.load_state_dict(state_dict=torch.load(params.best_model_path))
 
     def select_action(self, state, explore):
         eps_threshold = self.eps_end + (self.eps_start - self.eps_end) * math.exp(-1. * self.steps_done / self.eps_decay)
@@ -95,10 +99,13 @@ class ControllerDQN(nn.Module):
         self.hard_update()
         self.pruner.reinit_net()
 
-    def save_model(self, path):
-        torch.save(self, path)
+    def update_metrics(self, state, action, next_state, reward, done):
+        state_action_values = self.net(state).gather(1, action.unsqueeze(1))
+        best_values = self.best_net(state).gather(1, action.unsqueeze(1))
+        self.metrics["qerror"].add(state_action_values.item() - best_values.item())
 
     def push_in_memory(self, state, action, next_state, reward, done):
+        self.update_metrics(state, action, next_state, reward, done)
         self.memory.push(state, action, next_state, reward, done)
 
     def load_net(self, path):
