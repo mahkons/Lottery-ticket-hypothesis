@@ -9,7 +9,7 @@ import datetime
 from agent.Agent import Agent
 from agent.memory.ReplayMemory import ReplayMemory
 from agent.controllers.DQN import ControllerDQN
-from make_plots import create_reward_plot, create_reward_steps_plot, create_metric_plot
+from make_plots import create_reward_plot, create_metric_plot
 from logger.Logger import log, init_logger
 
 from envs import CartPole, LunarLander, Pong, Breakout
@@ -61,6 +61,7 @@ def train(episodes, prune_iters, prune_percent, device, random_state):
             if controller.optimization_completed() and not iter + 1 == prune_iters: # no stop on last iteration
                 break
 
+        create_metric_plot(log().get_plot("qerror"), title="qerror", avg_epochs=100, show_epochs=True).show()
         create_reward_plot(log().get_plot(exploit_plot), title=exploit_plot, avg_epochs=100).show()
         controller.prune()
         controller.reinit()
@@ -94,8 +95,6 @@ if __name__ == "__main__":
 
     args = create_parser().parse_args() 
 
-    
-    #  logger = Logger("logdir", args.logname) # global logger
     init_logger("logdir", args.logname)
     log().update_params(args.__dict__)
 
