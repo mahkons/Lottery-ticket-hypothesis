@@ -4,6 +4,7 @@ from tqdm import tqdm
 import argparse
 import random
 import os
+import datetime
 
 from agent.Agent import Agent
 from agent.memory.ReplayMemory import ReplayMemory
@@ -14,8 +15,6 @@ from logger.Logger import Logger
 from envs import CartPole, LunarLander, Pong, Breakout
 from params import CartPoleConfig, LunarLanderConfig, AtariConfig
 
-
-logger = Logger("logdir")
 
 
 def explore(agent, train_episode, plot_name):
@@ -63,7 +62,6 @@ def train(episodes, prune_iters, prune_percent, device, random_state):
             if controller.optimization_completed() and not iter + 1 == prune_iters: # no stop on last iteration
                 break
 
-        model.save_net("metrics/reference_models/LunarLander")
         create_reward_plot(logger.get_plot(exploit_plot), title=exploit_plot, avg_epochs=100).show()
         controller.prune()
         controller.reinit()
@@ -75,6 +73,8 @@ def create_parser():
     parser.add_argument('--prune-iters', type=int, default=1, required=False)
     parser.add_argument('--prune-percent', type=float, default=20, required=False)
     parser.add_argument('--device', type=str, default='cpu', required=False)
+
+    parser.add_argument('--logname', type=str, default="log_" + datetime.datetime.now().isoformat(), required=False)
     return parser
 
 
@@ -90,10 +90,11 @@ def init_random_seeds(RANDOM_SEED, cuda_determenistic):
 
 
 if __name__ == "__main__":
-    RANDOM_SEED = 179
+    RANDOM_SEED = 23
     init_random_seeds(RANDOM_SEED, cuda_determenistic=True)
 
     args = create_parser().parse_args() 
+    logger = Logger("logdir", args.logname) # global logger
     logger.update_params(args.__dict__)
 
     try:

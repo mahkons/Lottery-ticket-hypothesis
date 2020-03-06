@@ -1,17 +1,15 @@
 import pandas as pd
-import datetime
 import os
 import numpy as np
 from tensorboardX import SummaryWriter
 
 
 class Logger():
-    def __init__(self, logdir):
+    def __init__(self, logdir, logname):
         self.logdir = logdir
         
         assert(os.path.isdir(logdir))
-        dir = "log_" + datetime.datetime.now().isoformat()
-        self.dir = os.path.join(logdir, dir)
+        self.dir = os.path.join(logdir, logname)
         os.mkdir(self.dir)
 
         self.tensorboard_dir = os.path.join(self.dir, "tensorboard")
