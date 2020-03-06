@@ -67,11 +67,12 @@ class ControllerDQN(nn.Module):
         return loss
 
     def optimize(self):
+        self.steps_done += 1
         if self.steps_done % self.target_net_update_steps == 0:
             self.hard_update()
             self.stop_criterion.update_mask(self.pruner.get_mask_to_prune(self.prune_percent))
             self.pruner.epoch_step()
-        self.steps_done += 1
+            self.metrics.add_barrier("epoch")
 
         if len(self.memory) < self.batch_size:
             return
@@ -87,6 +88,7 @@ class ControllerDQN(nn.Module):
         return self.stop_criterion()
 
     def prune(self):
+        self.metrics.add_barrier("prune")
         self.pruner.prune_net(self.prune_percent)
 
     def reinit(self):

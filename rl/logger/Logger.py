@@ -3,6 +3,15 @@ import os
 import numpy as np
 from tensorboardX import SummaryWriter
 
+logger__ = None
+
+def init_logger(logdir, logname):
+    global logger__
+    logger__ = Logger(logdir, logname)
+
+def log():
+    global logger__
+    return logger__
 
 class Logger():
     def __init__(self, logdir, logname):
@@ -18,12 +27,15 @@ class Logger():
 
         self.params = dict()
         self.plots = dict()
+        self.plots_columns = dict()
 
     def update_params(self, params):
         self.params.update(params)
 
-    def add_plot(self, name):
+    def add_plot(self, name, columns):
+        assert name not in self.plots
         self.plots[name] = list()
+        self.plots_columns[name] = columns
 
     def add_plot_point(self, name, point):
         self.plots[name].append(point)
@@ -40,7 +52,7 @@ class Logger():
         os.mkdir(plot_path)
         for plot_name, plot_data in self.plots.items():
             filename = os.path.join(plot_path, plot_name + ".csv")
-            pd.DataFrame(plot_data, columns=("train_episode", "train_steps", "reward")).to_csv(filename)
+            pd.DataFrame(plot_data, columns=self.plots_columns[plot_name]).to_csv(filename)
 
         params_path = os.path.join(self.dir, "params.csv")
         pd.DataFrame(self.params.items(), columns=("name", "value")).to_csv(params_path)
@@ -49,6 +61,14 @@ class Logger():
         self.tensorboard_writer.add_hparams(self.params, {})
         for plot_name, plot_data in self.plots.items():
             for i in range(len(plot_data)):
-                self.tensorboard_writer.add_scalar(plot_name, np.asarray(plot_data[i][2]), i)
+                # skip str
+                if isinstance(plot_data[i], str):
+                    continue
+
+                # TODO fix ugly ifs
+                if isinstance(plot_data[i], tuple):
+                    self.tensorboard_writer.add_scalar(plot_name, plot_data[i][2], i)
+                else:
+                    self.tensorboard_writer.add_scalar(plot_name, plot_data[i], i)
 
         self.tensorboard_writer.close()

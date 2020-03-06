@@ -10,27 +10,26 @@ from agent.Agent import Agent
 from agent.memory.ReplayMemory import ReplayMemory
 from agent.controllers.DQN import ControllerDQN
 from make_plots import create_reward_plot, create_reward_steps_plot, create_metric_plot
-from logger.Logger import Logger
+from logger.Logger import log, init_logger
 
 from envs import CartPole, LunarLander, Pong, Breakout
 from params import CartPoleConfig, LunarLanderConfig, AtariConfig
 
 
-
 def explore(agent, train_episode, plot_name):
     reward, steps = agent.rollout(train=True)
-    logger.add_plot_point(plot_name, (train_episode, agent.controller.steps_done, reward))
+    log().add_plot_point(plot_name, (train_episode, agent.controller.steps_done, reward))
 
 
 def exploit(agent, train_episode, plot_name):
     reward, steps = agent.rollout(train=False)
-    logger.add_plot_point(plot_name, (train_episode, agent.controller.steps_done, reward))
+    log().add_plot_point(plot_name, (train_episode, agent.controller.steps_done, reward))
 
 
 def train(episodes, prune_iters, prune_percent, device, random_state):
     env = LunarLander(random_state=random_state)
     config = LunarLanderConfig()
-    logger.update_params(config.to_dict())
+    log().update_params(config.to_dict())
 
     memory = ReplayMemory(config.memory_config.memory_size)
     controller = ControllerDQN(env, memory, config, prune_percent=prune_percent, device=device)
@@ -44,8 +43,8 @@ def train(episodes, prune_iters, prune_percent, device, random_state):
         cur_percent = (1 - prune_percent / 100) ** iter
         explore_plot = "Explore_iter" + str(iter) + "_prune" + str(cur_percent)
         exploit_plot = "Exploit_iter" + str(iter) + "_prune" + str(cur_percent)
-        logger.add_plot(explore_plot)
-        logger.add_plot(exploit_plot)
+        log().add_plot(explore_plot, columns=("train_episode", "train_steps", "reward"))
+        log().add_plot(exploit_plot, columns=("train_episode", "train_steps", "reward"))
 
         for episode in pbar:
             # once in EXPLORE_ITERS train rollouts, do EXPLOIT_ITERS exploit rollouts
@@ -62,7 +61,7 @@ def train(episodes, prune_iters, prune_percent, device, random_state):
             if controller.optimization_completed() and not iter + 1 == prune_iters: # no stop on last iteration
                 break
 
-        create_reward_plot(logger.get_plot(exploit_plot), title=exploit_plot, avg_epochs=100).show()
+        create_reward_plot(log().get_plot(exploit_plot), title=exploit_plot, avg_epochs=100).show()
         controller.prune()
         controller.reinit()
 
@@ -94,11 +93,14 @@ if __name__ == "__main__":
     init_random_seeds(RANDOM_SEED, cuda_determenistic=True)
 
     args = create_parser().parse_args() 
-    logger = Logger("logdir", args.logname) # global logger
-    logger.update_params(args.__dict__)
+
+    
+    #  logger = Logger("logdir", args.logname) # global logger
+    init_logger("logdir", args.logname)
+    log().update_params(args.__dict__)
 
     try:
         train(args.episodes, args.prune_iters, args.prune_percent, torch.device(args.device), RANDOM_SEED)
     finally:
-        logger.save_logs()
+        log().save_logs()
 

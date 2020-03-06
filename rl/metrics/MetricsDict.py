@@ -5,10 +5,12 @@ class MetricsDict():
     def __init__(self, metrics_names):
         self.metrics_names = metrics_names
         self.dict = dict()
+        for metric in metrics_names:
+            self.dict[metric] = Metric(metric)
+
+    def add_barrier(self, barrier: str):
+        for name, data in self.dict.items():
+            data.add(barrier)
 
     def __getitem__(self, metric):
-        assert metric in self.metrics_names
-        
-        if not metric in self.dict:
-            self.dict[metric] = Metric(metric)
         return self.dict[metric]
