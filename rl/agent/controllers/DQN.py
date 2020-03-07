@@ -10,7 +10,7 @@ from agent.stop_criterions import NoStop, MaskDiffStop, EarlyBirdStop
 from agent.memory.ReplayMemory import Transition
 from networks.DQN import DQN
 from pruners import LayerwisePruner, GlobalPruner, RewindWrapper, RescalingGlobalPruner, RescalingLayerwisePruner
-from metrics import MetricsDict
+from metrics import MetricsDict, Barrier
 
 
 class ControllerDQN(nn.Module):
@@ -72,7 +72,7 @@ class ControllerDQN(nn.Module):
             self.hard_update()
             self.stop_criterion.update_mask(self.pruner.get_mask_to_prune(self.prune_percent))
             self.pruner.epoch_step()
-            self.metrics.add_barrier("epoch")
+            self.metrics.add_barrier(Barrier.EPOCH)
 
         if len(self.memory) < self.batch_size:
             return
@@ -88,7 +88,7 @@ class ControllerDQN(nn.Module):
         return self.stop_criterion()
 
     def prune(self):
-        self.metrics.add_barrier("prune")
+        self.metrics.add_barrier(Barrier.PRUNE)
         self.pruner.prune_net(self.prune_percent)
 
     def reinit(self):

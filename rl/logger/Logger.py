@@ -3,6 +3,8 @@ import os
 import numpy as np
 from tensorboardX import SummaryWriter
 
+from metrics import Barrier
+
 logger__ = None
 
 def init_logger(logdir, logname):
@@ -52,17 +54,17 @@ class Logger():
         os.mkdir(plot_path)
         for plot_name, plot_data in self.plots.items():
             filename = os.path.join(plot_path, plot_name + ".csv")
-            pd.DataFrame(plot_data, columns=self.plots_columns[plot_name]).to_csv(filename)
+            pd.DataFrame(plot_data, columns=self.plots_columns[plot_name]).to_csv(filename, index=False)
 
         params_path = os.path.join(self.dir, "params.csv")
-        pd.DataFrame(self.params.items(), columns=("name", "value")).to_csv(params_path)
+        pd.DataFrame(self.params.items(), columns=("name", "value")).to_csv(params_path, index=False)
 
     def save_tensorboard(self):
         self.tensorboard_writer.add_hparams(self.params, {})
         for plot_name, plot_data in self.plots.items():
             for i in range(len(plot_data)):
-                # skip str
-                if isinstance(plot_data[i], str):
+                # skip barriers
+                if plot_data[i] in Barrier.values():
                     continue
 
                 # TODO fix ugly ifs
