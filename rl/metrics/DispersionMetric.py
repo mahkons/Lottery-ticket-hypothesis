@@ -23,6 +23,6 @@ class DispersionMetric(Metric):
         self.window_sum += value
         self.window_square_sum += value ** 2
 
-        dispersion = (self.window_square_sum - self.window_sum ** 2) / len(self.window) ** 2
+        dispersion = self.window_square_sum / len(self.window)  - (self.window_sum / len(self.window)) ** 2
         super().add(dispersion)
 
