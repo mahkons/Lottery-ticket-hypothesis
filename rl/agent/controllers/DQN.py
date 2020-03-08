@@ -10,7 +10,7 @@ from agent.stop_criterions import NoStop, MaskDiffStop, EarlyBirdStop
 from agent.memory.ReplayMemory import Transition
 from networks.DQN import DQN
 from pruners import LayerwisePruner, GlobalPruner, RewindWrapper, RescalingGlobalPruner, RescalingLayerwisePruner
-from metrics import MetricsDict, Barrier
+from metrics import MetricsDict, Barrier, Metric, DispersionMetric
 
 
 class ControllerDQN(nn.Module):
@@ -39,7 +39,7 @@ class ControllerDQN(nn.Module):
 
         self.steps_done = 0
 
-        self.metrics = MetricsDict(set(("qerror",)))
+        self.metrics = MetricsDict((Metric("qerror"), DispersionMetric("stability", 50)))
         self.best_net = DQN(self.state_sz, self.action_sz, params.layers_sz, params.image_input).to(device)
         self.best_net.load_state_dict(state_dict=torch.load(params.best_model_path))
 

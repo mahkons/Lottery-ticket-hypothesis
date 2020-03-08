@@ -24,6 +24,7 @@ def explore(agent, train_episode, plot_name):
 def exploit(agent, train_episode, plot_name):
     reward, steps = agent.rollout(train=False)
     log().add_plot_point(plot_name, (train_episode, agent.controller.steps_done, reward))
+    agent.controller.metrics["stability"].add(reward)
 
 
 def train(episodes, prune_iters, prune_percent, device, random_state):

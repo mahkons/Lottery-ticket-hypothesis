@@ -30,13 +30,13 @@ def add_vertical_line(plot, x, y_st, y_en, name, color=None):
     add_trace(plot, x=[x, x], y=[y_st, y_en], name=name, color=color)
 
 
-def create_reward_plot(plot_data, title="reward plot", steps=False, avg_epochs=1):
+def create_reward_plot(plot_data, title="reward plot", use_steps=False, avg_epochs=1):
     plot = go.Figure()
     plot.update_layout(title=title)
     train_episodes, steps, rewards = zip(*plot_data)
 
     y = np.array(rewards)
-    if steps:
+    if use_steps:
         x = np.array(steps)
     else:
         x = np.array(train_episodes)
@@ -87,7 +87,10 @@ def get_last_log(logdir):
 if __name__ == "__main__":
     log_path = get_last_log("logdir")
     columns, data = load_csv(os.path.join(log_path, "plots", "Exploit_iter0_prune1.0.csv"))
-    create_reward_plot(np.squeeze(data), avg_epochs=100).show()
+    create_reward_plot(data, avg_epochs=100, use_steps=True).show()
 
     columns, data = load_csv(os.path.join(log_path, "plots", "qerror.csv"))
-    create_metric_plot(np.squeeze(data), avg_epochs=1000, show_epochs=True).show()
+    create_metric_plot(np.squeeze(data), avg_epochs=10000).show()
+
+    columns, data = load_csv(os.path.join(log_path, "plots", "stability.csv"))
+    create_metric_plot(np.squeeze(data), avg_epochs=1).show()
