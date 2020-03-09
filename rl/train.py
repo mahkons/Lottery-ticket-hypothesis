@@ -27,7 +27,7 @@ def exploit(agent, train_episode, plot_name):
     agent.controller.metrics["stability"].add(reward)
 
 
-def train(episodes, prune_iters, prune_percent, device, random_state):
+def train(episodes, opt_steps, prune_iters, prune_percent, device, random_state):
     env = LunarLander(random_state=random_state)
     config = LunarLanderConfig()
     log().update_params(config.to_dict())
@@ -51,14 +51,16 @@ def train(episodes, prune_iters, prune_percent, device, random_state):
             # once in EXPLORE_ITERS train rollouts, do EXPLOIT_ITERS exploit rollouts
             if episode % EXPLORE_ITERS == EXPLORE_ITERS - 1:
                 for _ in range(EXPLOIT_ITERS):
-                    pbar.set_description("Iter[{}/{}] Episode [{}/{}] Exploit"
-                            .format(iter + 1, prune_iters, episode + 1, episodes))
+                    pbar.set_description("Iter[{}/{}] Episode [{}/{}] Step[{}/{}] Exploit"
+                            .format(iter + 1, prune_iters, episode + 1, episodes, controller.steps_done, opt_steps))
                     exploit(agent, episode, exploit_plot)
 
-            pbar.set_description("Iter[{}/{}] Episode [{}/{}] Explore"
-                    .format(iter + 1, prune_iters, episode + 1, episodes))
+            pbar.set_description("Iter[{}/{}] Episode [{}/{}] Step[{}/{}] Explore"
+                    .format(iter + 1, prune_iters, episode + 1, episodes, controller.steps_done, opt_steps))
             explore(agent, episode, explore_plot)
-                
+
+            if controller.steps_done >= opt_steps:
+                break
             if controller.optimization_completed() and not iter + 1 == prune_iters: # no stop on last iteration
                 break
 
@@ -68,12 +70,15 @@ def train(episodes, prune_iters, prune_percent, device, random_state):
 
 def create_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--episodes', type=int, default=1000, required=False)
     parser.add_argument('--prune-iters', type=int, default=1, required=False)
     parser.add_argument('--prune-percent', type=float, default=20, required=False)
     parser.add_argument('--device', type=str, default='cpu', required=False)
 
     parser.add_argument('--logname', type=str, default="log_" + datetime.datetime.now().isoformat(), required=False)
+
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--episodes', type=int, default=10**10)
+    group.add_argument('--opt-steps', type=int, default=10**10)
     return parser
 
 
@@ -89,7 +94,7 @@ def init_random_seeds(RANDOM_SEED, cuda_determenistic):
 
 
 if __name__ == "__main__":
-    RANDOM_SEED = 23
+    RANDOM_SEED = 8
     init_random_seeds(RANDOM_SEED, cuda_determenistic=True)
 
     args = create_parser().parse_args() 
@@ -98,7 +103,8 @@ if __name__ == "__main__":
     log().update_params(args.__dict__)
 
     try:
-        train(args.episodes, args.prune_iters, args.prune_percent, torch.device(args.device), RANDOM_SEED)
+        train(args.episodes, args.opt_steps,
+                args.prune_iters, args.prune_percent, torch.device(args.device), RANDOM_SEED)
     finally:
         log().save_logs()
 

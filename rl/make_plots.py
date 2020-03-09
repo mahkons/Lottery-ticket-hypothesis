@@ -2,6 +2,7 @@ import plotly as plt
 import plotly.graph_objects as go
 import argparse
 import os
+import re
 
 import torch
 import numpy as np
@@ -30,9 +31,7 @@ def add_vertical_line(plot, x, y_st, y_en, name, color=None):
     add_trace(plot, x=[x, x], y=[y_st, y_en], name=name, color=color)
 
 
-def create_reward_plot(plot_data, title="reward plot", use_steps=False, avg_epochs=1):
-    plot = go.Figure()
-    plot.update_layout(title=title)
+def add_reward_trace(plot, plot_data, use_steps=False, avg_epochs=1, name="reward"):
     train_episodes, steps, rewards = zip(*plot_data)
 
     y = np.array(rewards)
@@ -40,7 +39,14 @@ def create_reward_plot(plot_data, title="reward plot", use_steps=False, avg_epoc
         x = np.array(steps)
     else:
         x = np.array(train_episodes)
-    add_avg_trace(plot, x, y, name="reward", avg_epochs=avg_epochs)
+    add_avg_trace(plot, x, y, name=name, avg_epochs=avg_epochs)
+
+
+def create_reward_plot(plot_data, title="reward plot", use_steps=False, avg_epochs=1):
+    plot = go.Figure()
+    plot.update_layout(title=title)
+
+    add_reward_trace(plot, plot_data, use_steps, avg_epochs)
 
     return plot
 
@@ -84,13 +90,31 @@ def get_last_log(logdir):
     return max([os.path.join(logdir, d) for d in os.listdir(logdir)], key=os.path.getmtime)
 
 
+def get_paths(dir, prefix=""):
+    return sorted(filter(lambda path: path.startswith(prefix), os.listdir(dir)),
+            key=lambda var:[int(x) if x.isdigit() else x for x in re.findall(r'[^0-9]|[0-9]+', var)])
+
+
+def show_rewards(log_path, use_steps=False):
+    paths = get_paths(os.path.join(log_path, "plots"), "Exploit")
+    plot = go.Figure()
+    for path in paths:
+        data = load_csv(os.path.join(log_path, "plots", path))[1]
+        add_reward_trace(plot, data, use_steps=use_steps, avg_epochs=100, name=path)
+
+    plot.show()
+
+
 if __name__ == "__main__":
     log_path = get_last_log("logdir")
-    columns, data = load_csv(os.path.join(log_path, "plots", "Exploit_iter0_prune1.0.csv"))
+
+    show_rewards(log_path)
+
+    data = load_csv(os.path.join(log_path, "plots", "Exploit_iter0_prune1.0.csv"))[1]
     create_reward_plot(data, avg_epochs=100, use_steps=True).show()
 
-    columns, data = load_csv(os.path.join(log_path, "plots", "qerror.csv"))
+    data = load_csv(os.path.join(log_path, "plots", "qerror.csv"))[1]
     create_metric_plot(np.squeeze(data), avg_epochs=10000).show()
 
-    columns, data = load_csv(os.path.join(log_path, "plots", "stability.csv"))
+    data = load_csv(os.path.join(log_path, "plots", "stability.csv"))[1]
     create_metric_plot(np.squeeze(data), avg_epochs=1).show()
