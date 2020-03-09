@@ -98,6 +98,7 @@ def get_paths(dir, prefix=""):
 def show_rewards(log_path, use_steps=False):
     paths = get_paths(os.path.join(log_path, "plots"), "Exploit")
     plot = go.Figure()
+    plot.update_layout(title="rewards")
     for path in paths:
         data = load_csv(os.path.join(log_path, "plots", path))[1]
         add_reward_trace(plot, data, use_steps=use_steps, avg_epochs=100, name=path)
@@ -105,16 +106,23 @@ def show_rewards(log_path, use_steps=False):
     plot.show()
 
 
+def create_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--logpath', type=str, default=None, required=False)
+    return parser
+
+
 if __name__ == "__main__":
-    log_path = get_last_log("logdir")
+    args = create_parser().parse_args() 
+    if args.logpath is None:
+        logpath = get_last_log("logdir")
+    else:
+        logpath = args.logpath
 
-    show_rewards(log_path)
+    show_rewards(logpath, use_steps=True)
 
-    data = load_csv(os.path.join(log_path, "plots", "Exploit_iter0_prune1.0.csv"))[1]
-    create_reward_plot(data, avg_epochs=100, use_steps=True).show()
-
-    data = load_csv(os.path.join(log_path, "plots", "qerror.csv"))[1]
+    data = load_csv(os.path.join(logpath, "plots", "qerror.csv"))[1]
     create_metric_plot(np.squeeze(data), avg_epochs=10000).show()
 
-    data = load_csv(os.path.join(log_path, "plots", "stability.csv"))[1]
+    data = load_csv(os.path.join(logpath, "plots", "stability.csv"))[1]
     create_metric_plot(np.squeeze(data), avg_epochs=1).show()
