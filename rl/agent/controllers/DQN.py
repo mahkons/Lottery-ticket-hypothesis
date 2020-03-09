@@ -97,9 +97,9 @@ class ControllerDQN(nn.Module):
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=self.params.optimizer_config.lr)
         self.stop_criterion.reset()
 
-        # Next iteration target net will start with cool parameters
-        self.hard_update()
+        # Next iteration target net will start with NOT cool parameters
         self.pruner.reinit_net()
+        self.hard_update()
 
     def update_metrics(self, state, action, next_state, reward, done):
         state_action_values = self.net(state).gather(1, action.unsqueeze(1))
