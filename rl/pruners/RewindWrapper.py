@@ -3,9 +3,11 @@
 # After reinit_epochs saves current weights
 # Next pruner reinits will return to those weights
 class RewindWrapper():
-    def __init__(self, pruner, reinit_epochs):
+    def __init__(self, pruner, reinit_epochs, rescale=False):
         self.pruner = pruner
         self.reinit_epochs = reinit_epochs
+        self.rescale = rescale
+
         self.pruner_epoch = 0
 
     def epoch_step(self):
@@ -18,6 +20,11 @@ class RewindWrapper():
         # do not update pruner_epoch
         # rewind always to same epoch
         self.pruner.reinit_net()
+
+        if self.rescale:
+            for name, param in self.pruner.net.named_parameters():
+                scaling_factor = self.pruner.net_init_state[name].abs().sum() / param.data.abs().sum()
+                param.data *= scaling_factor
 
     def optimization_step(self):
         self.pruner.optimization_step()

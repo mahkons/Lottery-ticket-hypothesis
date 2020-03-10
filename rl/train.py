@@ -94,7 +94,7 @@ def init_random_seeds(RANDOM_SEED, cuda_determenistic):
 
 
 if __name__ == "__main__":
-    RANDOM_SEED = 8
+    RANDOM_SEED = 9
     init_random_seeds(RANDOM_SEED, cuda_determenistic=True)
 
     args = create_parser().parse_args() 

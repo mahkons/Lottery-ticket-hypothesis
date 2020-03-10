@@ -9,7 +9,7 @@ import random
 from agent.stop_criterions import NoStop, MaskDiffStop, EarlyBirdStop
 from agent.memory.ReplayMemory import Transition
 from networks.DQN import DQN
-from pruners import LayerwisePruner, GlobalPruner, RewindWrapper, RescalingGlobalPruner, RescalingLayerwisePruner
+from pruners import LayerwisePruner, GlobalPruner, RewindWrapper
 from metrics import MetricsDict, Barrier, Metric, DispersionMetric
 
 
