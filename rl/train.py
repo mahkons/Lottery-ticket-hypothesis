@@ -29,7 +29,7 @@ def exploit(agent, train_episode, plot_name):
 
 def train(episodes, opt_steps, prune_iters, prune_percent, device, random_state):
     env = LunarLander(random_state=random_state)
-    config = BigLunarLanderConfig()
+    config = LunarLanderConfig()
     log().update_params(config.to_dict())
 
     memory = ReplayMemory(config.memory_config.memory_size)

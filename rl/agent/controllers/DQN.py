@@ -9,7 +9,7 @@ import random
 from agent.stop_criterions import NoStop, MaskDiffStop, EarlyBirdStop
 from agent.memory.ReplayMemory import Transition
 from networks.DQN import DQN
-from pruners import LayerwisePruner, GlobalPruner, RewindWrapper
+from pruners import LayerwisePruner, GlobalPruner, ERPruner, RewindWrapper
 from metrics import MetricsDict, Barrier, Metric, DispersionMetric
 
 
@@ -33,7 +33,7 @@ class ControllerDQN(nn.Module):
         self.target_net = DQN(self.state_sz, self.action_sz, params.layers_sz, params.image_input).to(device)
 
         self.prune_percent = prune_percent
-        self.pruner = RewindWrapper(LayerwisePruner(self.net, self.device), 0)
+        self.pruner = RewindWrapper(ERPruner(self.net, self.device), 0)
         self.stop_criterion = MaskDiffStop(eps=0)
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=params.optimizer_config.lr)
 
