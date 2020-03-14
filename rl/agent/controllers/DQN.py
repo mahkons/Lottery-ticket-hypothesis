@@ -40,8 +40,12 @@ class ControllerDQN(nn.Module):
         self.steps_done = 0
 
         self.metrics = MetricsDict((Metric("qerror"), DispersionMetric("stability", 50)))
-        self.best_net = DQN(self.state_sz, self.action_sz, params.layers_sz, params.image_input).to(device)
-        self.best_net.load_state_dict(state_dict=torch.load(params.best_model_path))
+
+        if params.best_model_path != ":(":
+            self.best_net = DQN(self.state_sz, self.action_sz, params.layers_sz, params.image_input).to(device)
+            self.best_net.load_state_dict(state_dict=torch.load(params.best_model_path))
+        else:
+            self.best_net = None
 
     def select_action(self, state, explore):
         eps_threshold = self.eps_end + (self.eps_start - self.eps_end) * math.exp(-1. * self.steps_done / self.eps_decay)
@@ -102,9 +106,10 @@ class ControllerDQN(nn.Module):
         self.hard_update()
 
     def update_metrics(self, state, action, next_state, reward, done):
-        state_action_values = self.net(state).gather(1, action.unsqueeze(1))
-        best_values = self.best_net(state).gather(1, action.unsqueeze(1))
-        self.metrics["qerror"].add(state_action_values.item() - best_values.item())
+        if self.best_net:
+            state_action_values = self.net(state).gather(1, action.unsqueeze(1))
+            best_values = self.best_net(state).gather(1, action.unsqueeze(1))
+            self.metrics["qerror"].add(state_action_values.item() - best_values.item())
 
     def push_in_memory(self, state, action, next_state, reward, done):
         self.update_metrics(state, action, next_state, reward, done)

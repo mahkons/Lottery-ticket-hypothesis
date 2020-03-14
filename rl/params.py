@@ -13,7 +13,7 @@ def CartPoleConfig():
         layers_sz = [64],
         image_input = False,
 
-        best_model_path = "no:(",
+        best_model_path = ":(",
     )
 
 
@@ -33,6 +33,12 @@ def LunarLanderConfig():
         best_model_path = "metrics/reference_models/LunarLander",
     )
 
+def BigLunarLanderConfig():
+    config = LunarLanderConfig()
+    config.layers_sz = [2048, 512]
+    config.best_model_path = ":("
+    return config
+
 
 def AtariConfig():
     return DQNConfig(
@@ -47,5 +53,5 @@ def AtariConfig():
         layers_sz = [0], # tensorboardX fails to save with None or empty list hyperparam #TODO fix
         image_input = True,
 
-        best_model_path = "no:(",
+        best_model_path = ":(",
     )
