@@ -51,7 +51,7 @@ class Logger():
 
     def save_csv(self):
         plot_path = os.path.join(self.dir, "plots")
-        os.mkdir(plot_path)
+        os.makedirs(plot_path, exist_ok=True)
         for plot_name, plot_data in self.plots.items():
             filename = os.path.join(plot_path, plot_name + ".csv")
             pd.DataFrame(plot_data, columns=self.plots_columns[plot_name]).to_csv(filename, index=False)
@@ -72,5 +72,3 @@ class Logger():
                     self.tensorboard_writer.add_scalar(plot_name, plot_data[i][2], i)
                 else:
                     self.tensorboard_writer.add_scalar(plot_name, plot_data[i], i)
-
-        self.tensorboard_writer.close()

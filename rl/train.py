@@ -67,6 +67,8 @@ def train(episodes, opt_steps, prune_iters, prune_percent, device, random_state)
         controller.prune()
         controller.reinit()
 
+        log().save_logs()
+
 
 def create_parser():
     parser = argparse.ArgumentParser()
