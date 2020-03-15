@@ -12,11 +12,11 @@ from agent.stop_criterions import MaskDiffStop, EarlyBirdStop, NoStop
 device = torch.device('cpu')
 exp_list = list()
 
-def make_pruner__(rewind_epoch, pruner_constructor, net):
-    return RewindWrapper(pruner_constructor(net, device), rewind_epoch)
+def make_pruner__(rewind_epoch, rescale, pruner_constructor, net):
+    return RewindWrapper(pruner_constructor(net, device), rewind_epoch, rescale=rescale)
 
-def make_pruner(rewind_epoch, pruner_constructor):
-    return partial(make_pruner__, rewind_epoch, pruner_constructor)
+def make_pruner(rewind_epoch, rescale, pruner_constructor):
+    return partial(make_pruner__, rewind_epoch, pruner_constructor, rescale=rescale)
 
 
 RANDOM_SEED=2020
@@ -31,7 +31,7 @@ exp_list.append(Experiment(
         env = LunarLander(random_state=RANDOM_SEED),
         hyperparams = LunarLanderConfig(),
         stop_criterion = MaskDiffStop(eps=0),
-        pruner = make_pruner(0, ERPruner),
+        pruner = make_pruner(0, ERPruner, False),
     )
 )
 
@@ -47,7 +47,7 @@ exp_list.append(Experiment(
         env = LunarLander(random_state=RANDOM_SEED),
         hyperparams = LunarLanderConfig(),
         stop_criterion = MaskDiffStop(eps=0),
-        pruner = make_pruner(0, ERPruner),
+        pruner = make_pruner(0, ERPruner, False),
     )
 )
 

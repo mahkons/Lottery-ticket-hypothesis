@@ -132,7 +132,7 @@ if __name__ == "__main__":
             env = LunarLander(random_state=RANDOM_SEED),
             hyperparams = LunarLanderConfig(),
             stop_criterion = MaskDiffStop(eps=0),
-            pruner = lambda net: RewindWrapper(ERPruner(net, device), 0),
+            pruner = lambda net: RewindWrapper(ERPruner(net, device), 0, rescale=False),
         )
 
     start_experiment(experiment)
