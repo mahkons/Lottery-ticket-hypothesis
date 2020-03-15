@@ -12,8 +12,11 @@ from agent.controllers.DQN import ControllerDQN
 from make_plots import create_reward_plot, create_metric_plot
 from logger.Logger import log, init_logger
 
+from configs import Experiment
 from envs import CartPole, LunarLander, Pong, Breakout
 from params import CartPoleConfig, LunarLanderConfig, AtariConfig, BigLunarLanderConfig
+from pruners import LayerwisePruner, GlobalPruner, ERPruner, RewindWrapper
+from agent.stop_criterions import NoStop, MaskDiffStop, EarlyBirdStop
 
 
 def explore(agent, train_episode, plot_name):
@@ -27,21 +30,27 @@ def exploit(agent, train_episode, plot_name):
     agent.controller.metrics["stability"].add(reward)
 
 
-def train(episodes, opt_steps, prune_iters, prune_percent, device, random_state):
-    env = LunarLander(random_state=random_state)
-    config = LunarLanderConfig()
-    log().update_params(config.to_dict())
-
-    memory = ReplayMemory(config.memory_config.memory_size)
-    controller = ControllerDQN(env, memory, config, prune_percent=prune_percent, device=device)
-    agent = Agent(env, controller, device=device)
+def train(experiment):
+    memory = ReplayMemory(experiment.hyperparams.memory_config.memory_size)
+    controller = ControllerDQN(
+            env = experiment.env,
+            memory = memory,
+            params = experiment.hyperparams,
+            prune_percent = experiment.prune_percent,
+            pruner = experiment.pruner,
+            stop_criterion = experiment.stop_criterion,
+            device = experiment.device
+        )
+    agent = Agent(experiment.env, controller, device=experiment.device)
 
     EXPLORE_ITERS = 1
     EXPLOIT_ITERS = 1
 
+    episodes, prune_iters, opt_steps = experiment.episodes, experiment.prune_iters, experiment.opt_steps
+
     for iter in range(prune_iters):
         pbar = tqdm(range(episodes))
-        cur_percent = (1 - prune_percent / 100) ** iter
+        cur_percent = (1 - experiment.prune_percent / 100) ** iter
         explore_plot = "Explore_iter" + str(iter) + "_prune" + str(cur_percent)
         exploit_plot = "Exploit_iter" + str(iter) + "_prune" + str(cur_percent)
         log().add_plot(explore_plot, columns=("train_episode", "train_steps", "reward"))
@@ -95,19 +104,35 @@ def init_random_seeds(RANDOM_SEED, cuda_determenistic):
         torch.backends.cudnn.benchmark = False
 
 
-if __name__ == "__main__":
-    RANDOM_SEED = 2020
-    init_random_seeds(RANDOM_SEED, cuda_determenistic=True)
-
-    args = create_parser().parse_args() 
-
-    init_logger("logdir", args.logname)
-    log().update_params(args.__dict__)
+def start_experiment(experiment):
+    init_random_seeds(experiment.random_seed, cuda_determenistic=True)
+    init_logger("logdir", experiment.logname)
+    log().update_params(experiment.to_dict())
 
     try:
-        train(args.episodes, args.opt_steps,
-                args.prune_iters, args.prune_percent, torch.device(args.device), RANDOM_SEED)
+        train(experiment)
     finally:
         log().save_logs()
-        raise
 
+
+if __name__ == "__main__":
+    args = create_parser().parse_args() 
+
+    RANDOM_SEED = 2020
+    device = torch.device(args.device)
+
+    experiment = Experiment(
+            opt_steps = args.opt_steps,
+            episodes = args.episodes,
+            prune_iters = args.prune_iters,
+            prune_percent = args.prune_percent,
+            device = device,
+            logname = args.logname,
+            random_seed = RANDOM_SEED,
+            env = LunarLander(random_state=RANDOM_SEED),
+            hyperparams = LunarLanderConfig(),
+            stop_criterion = MaskDiffStop(eps=0),
+            pruner = lambda net: RewindWrapper(ERPruner(net, device), 0),
+        )
+
+    start_experiment(experiment)
