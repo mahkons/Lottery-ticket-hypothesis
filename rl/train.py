@@ -96,7 +96,7 @@ def init_random_seeds(RANDOM_SEED, cuda_determenistic):
 
 
 if __name__ == "__main__":
-    RANDOM_SEED = 9
+    RANDOM_SEED = 2020
     init_random_seeds(RANDOM_SEED, cuda_determenistic=True)
 
     args = create_parser().parse_args() 
@@ -109,4 +109,5 @@ if __name__ == "__main__":
                 args.prune_iters, args.prune_percent, torch.device(args.device), RANDOM_SEED)
     finally:
         log().save_logs()
+        raise
 

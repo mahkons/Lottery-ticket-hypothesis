@@ -47,7 +47,8 @@ class Logger():
 
     def save_logs(self):
         self.save_csv()
-        self.save_tensorboard()
+        # Yet not use it
+        # self.save_tensorboard() 
 
     def save_csv(self):
         plot_path = os.path.join(self.dir, "plots")

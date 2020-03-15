@@ -121,8 +121,8 @@ if __name__ == "__main__":
 
     show_rewards(logpath, use_steps=True)
 
-    #  data = load_csv(os.path.join(logpath, "plots", "qerror.csv"))[1]
-    #  create_metric_plot(np.squeeze(data), avg_epochs=10000).show()
+    data = load_csv(os.path.join(logpath, "plots", "qerror.csv"))[1]
+    create_metric_plot(np.squeeze(data), avg_epochs=10000).show()
 
     data = load_csv(os.path.join(logpath, "plots", "stability.csv"))[1]
     create_metric_plot(np.squeeze(data), avg_epochs=1).show()
