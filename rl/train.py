@@ -31,9 +31,10 @@ def exploit(agent, train_episode, plot_name):
 
 
 def train(experiment):
+    env = experiment.env(random_state=experiment.random_seed)
     memory = ReplayMemory(experiment.hyperparams.memory_config.memory_size)
     controller = ControllerDQN(
-            env = experiment.env,
+            env = env,
             memory = memory,
             params = experiment.hyperparams,
             prune_percent = experiment.prune_percent,
@@ -41,7 +42,7 @@ def train(experiment):
             stop_criterion = experiment.stop_criterion,
             device = experiment.device
         )
-    agent = Agent(experiment.env, controller, device=experiment.device)
+    agent = Agent(env, controller, device=experiment.device)
 
     EXPLORE_ITERS = 1
     EXPLOIT_ITERS = 1

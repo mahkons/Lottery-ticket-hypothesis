@@ -9,7 +9,7 @@ from pruners.Pruner import Pruner
 # prunes both weights and biases
 class GlobalPruner(Pruner):
     def get_mask_to_prune(self, p):
-        assert p > 0
+        assert p >= 0
 
         full_data = list()
         for name, param in self.net.named_parameters():

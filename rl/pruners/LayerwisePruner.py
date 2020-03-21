@@ -9,7 +9,7 @@ from pruners.Pruner import Pruner
 # prunes only weights, not biases
 class LayerwisePruner(Pruner):
     def get_mask_to_prune(self, p):
-        assert p > 0
+        assert p >= 0
 
         mask_to_prune = dict()
         for name, param in self.net.named_parameters():
