@@ -30,8 +30,8 @@ def generate_experiments():
     )
 
     custom_experiment = Experiment(
-        opt_steps = 1000000,
-        episodes = 10 ** 10,
+        opt_steps = 500,
+        episodes = 10**10,
         prune_iters = 1,
         prune_percent = 0,
         device = None,
@@ -40,7 +40,7 @@ def generate_experiments():
         env = LunarLander,
         hyperparams = custom_params,
         stop_criterion = MaskDiffStop(eps=0),
-        pruner = make_pruner(0, rescale=False, pruner_constructor=LayerwisePruner),
+        pruner = make_pruner(rewind_epoch=0, rescale=False, pruner_constructor=LayerwisePruner),
     )
 
     for lr in [0.1, 0.05, 0.02, 0.01, 0.005, 0.003, 0.002, 0.001, 0.0008, 0.0005, 0.0001]:

@@ -10,13 +10,14 @@ import pandas as pd
 
 from metrics import Barrier
 
+
 def add_trace(plot, x, y, name, color=None):
     plot.add_trace(go.Scatter(x=x, y=y, name=name, line_color=color))
 
 def add_avg_trace(plot, x, y, name, avg_epochs, color=None):
     add_trace(plot, x, make_smooth(y, avg_epochs), name, color=color)
 
-def make_smooth(y, avg_epochs=100):
+def make_smooth(y, avg_epochs=1):
     ny = list()
     cur_val = y[0]
     for i in range(len(y)):
@@ -31,7 +32,11 @@ def add_vertical_line(plot, x, y_st, y_en, name, color=None):
     add_trace(plot, x=[x, x], y=[y_st, y_en], name=name, color=color)
 
 
-def add_reward_trace(plot, plot_data, use_steps=False, avg_epochs=1, name="reward"):
+def add_reward_trace(plot, plot_data, use_steps=True, avg_epochs=1, name="reward"):
+    if use_steps:
+        plot_data = plot_data[np.argsort(plot_data[:, 1])]
+    else:
+        plot_data = plot_data[np.argsort(plot_data[:, 0])]
     train_episodes, steps, rewards = zip(*plot_data)
 
     y = np.array(rewards)
@@ -84,7 +89,7 @@ def create_metric_plot(plot_data, title="metric", avg_epochs=1, show_epochs=Fals
 
 def load_csv(path):
     dataframe = pd.read_csv(path, index_col=False)
-    return dataframe.columns, dataframe.to_numpy()
+    return dataframe.to_numpy()
 
 def get_last_log(logdir):
     return max([os.path.join(logdir, d) for d in os.listdir(logdir)], key=os.path.getmtime)
@@ -95,34 +100,70 @@ def get_paths(dir, prefix=""):
             key=lambda var:[int(x) if x.isdigit() else x for x in re.findall(r'[^0-9]|[0-9]+', var)])
 
 
-def show_rewards(log_path, use_steps=False):
-    paths = get_paths(os.path.join(log_path, "plots"), "Exploit")
-    plot = go.Figure()
-    plot.update_layout(title="rewards")
-    for path in paths:
-        data = load_csv(os.path.join(log_path, "plots", path))[1]
-        add_reward_trace(plot, data, use_steps=use_steps, avg_epochs=100, name=path)
+def load_data(logpath, plotpath, repeat=None):
+    if repeat is None:
+        return load_csv(os.path.join(logpath, plotpath))
 
-    plot.show()
+    paths = [os.path.join("logdir", d) for d in os.listdir("logdir")]
+    paths = list(filter(lambda x: x.startswith(logpath), paths))
+    data_list = list()
+    for path in paths:
+        data_list.append(load_csv(os.path.join(path, plotpath)))
+
+    data = np.concatenate(data_list)
+    return data
+
+
+def add_rewards(plot, logpath, use_steps=True, repeat=None):
+    if repeat is None:
+        dirpath = logpath
+    else:
+        dirpath = logpath + "_repeat_0"
+
+    paths = get_paths(os.path.join(dirpath, "plots"), "Exploit")
+    for path in paths:
+        data = load_data(logpath, os.path.join("plots", path), repeat)
+        add_reward_trace(plot, data, use_steps=use_steps, avg_epochs=400, name=logpath + path)
+
+    return plot
+
+
+def remove_repeat_suffix(x):
+    pattern = re.compile("_repeat_\d*")
+    pos = pattern.search(x)
+    if pos != None:
+        x = x[:pos.span()[0]]
+    return x
 
 
 def create_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('--logpath', type=str, default=None, required=False)
+    parser.add_argument('--repeat', type=int, default=None, required=False)
     return parser
 
 
 if __name__ == "__main__":
     args = create_parser().parse_args() 
     if args.logpath is None:
-        logpath = get_last_log("logdir")
+        logpaths = [get_last_log("logdir")]
     else:
-        logpath = args.logpath
+        logpaths = list(filter(lambda x: re.fullmatch(args.logpath, x), os.listdir("logdir"))) 
+        logpaths = [os.path.join("logdir", d) for d in logpaths]
 
-    show_rewards(logpath, use_steps=True)
+    if args.repeat:
+        logpaths = list(set(map(remove_repeat_suffix, logpaths)))
 
-    data = load_csv(os.path.join(logpath, "plots", "qerror.csv"))[1]
-    create_metric_plot(np.squeeze(data), avg_epochs=10000).show()
+    
+    rewards_plot = go.Figure()
 
-    data = load_csv(os.path.join(logpath, "plots", "stability.csv"))[1]
-    create_metric_plot(np.squeeze(data), avg_epochs=1).show()
+    for logpath in logpaths:
+        add_rewards(rewards_plot, logpath, use_steps=True, repeat=args.repeat)
+
+    plt.offline.plot(rewards_plot, filename="generated/rewards_plot.html")
+
+    #  data = load_csv(os.path.join(logpath, "plots", "qerror.csv"))[1]
+    #  create_metric_plot(np.squeeze(data), avg_epochs=10000).show()
+
+    #  data = load_csv(os.path.join(logpath, "plots", "stability.csv"))[1]
+    #  create_metric_plot(np.squeeze(data), avg_epochs=1).show()
