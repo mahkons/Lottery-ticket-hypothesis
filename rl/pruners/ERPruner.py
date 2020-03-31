@@ -47,7 +47,7 @@ class ERPruner(Pruner):
             density = 1 - self.param_c[name] * (1 - new_density) * self.s0
 
             data = param.data
-            threshold = np.percentile(np.abs(data.cpu().numpy()), density * 100)
+            threshold = np.percentile(np.abs(data.cpu().numpy()), (1 - density) * 100)
 
             mask_to_prune[name][torch.abs(param.data) < threshold] = 0
 
