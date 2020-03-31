@@ -10,16 +10,15 @@ And an application of this hypothesis to reinforcement learning
     - [x] Implement DQN  
     - [x] Test on classic gym environments (CartPole, LunarLander)   
     - [x] Try IMP (layerwise/global) with DQN on classic problems  
-    - [x] IMP with rewind
-    - [x] Early stop criterions
-    - [x] Rescaling weight after reinit
-    - [ ] Global/Layerwise/ERK
+    - [x] Add IMP with reinitialization to some epoch after training  
+    - [x] Add early stop criterions  
+    - [x] Add Rescaling weight after reinit  
+    - [x] Add Global/Layerwise/ERK pruners  
     - [ ] Analyze the specifics of applying Lottery ticket to DQN (e.g. target function updates)  
-    - [ ] Try different early-stop techniques  
-    - [ ] Dynamic epochs?  
+    - [ ] Dynamic epochs  
     - [ ] DDPG? Dueling networks? Different RL architecures...  
     - [ ] Atari games?  
-    - [ ] Compare with other articles?
+    - [ ] Compare with other articles
     - [ ] Clean up this list  
 
 # Related articles
@@ -34,7 +33,7 @@ And an application of this hypothesis to reinforcement learning
 
 
 ### More or less related
-# TODO Mark interesting ones somehow
+##### Clean up this list as well
 [Optimal Brain Surgeon](https://papers.nips.cc/paper/647-second-order-derivatives-for-network-pruning-optimal-brain-surgeon)--second derivatives  
 [Learning both Weights and Connections](https://arxiv.org/abs/1506.02626)--prune + tune  
 [Dynamic Network Surgery](https://arxiv.org/abs/1608.04493)--parameter importance + grow pruned?  
@@ -51,4 +50,4 @@ And an application of this hypothesis to reinforcement learning
 [Improving Reliability of Lottery Tickets](https://arxiv.org/abs/2002.03875)--??  
 
 ### Is it possible to make it fast?
-https://arxiv.org/abs/1602.01528   
+[Efficient Inference Engine](https://arxiv.org/abs/1602.01528)--??  
