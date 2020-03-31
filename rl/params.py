@@ -25,8 +25,8 @@ def LunarLanderConfig():
         gamma = 0.99,
         eps_start = 0.9,
         eps_end = 0.05,
-        eps_decay = 5000,
-        target_net_update_steps = 5000,
+        eps_decay = 20000,
+        target_net_update_steps = 10000,
         layers_sz = [256, 128],
         image_input = False,
 

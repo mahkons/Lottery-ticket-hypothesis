@@ -8,11 +8,11 @@ import random
 
 from agent.memory.ReplayMemory import Transition
 from networks.DQN import DQN
-from metrics import MetricsDict, Barrier, Metric, DispersionMetric
+from metrics import MetricsDict, Barrier, Metric, DispersionMetric, ListMetric
 
 
 class ControllerDQN(nn.Module):
-    def __init__(self, env, memory, params, prune_percent, pruner, stop_criterion, device=torch.device('cpu')):
+    def __init__(self, env, memory, params, prune_percent, pruner, stop_criterion, device):
         super(ControllerDQN, self).__init__()
         self.state_sz = env.state_sz
         self.action_sz = env.action_sz
@@ -37,7 +37,7 @@ class ControllerDQN(nn.Module):
 
         self.steps_done = 0
 
-        self.metrics = MetricsDict((Metric("qerror"), DispersionMetric("stability", 50)))
+        self.metrics = MetricsDict((Metric("qerror"), DispersionMetric("stability", 50), ListMetric("weights")))
 
         if params.best_model_path != ":(":
             self.best_net = DQN(self.state_sz, self.action_sz, params.layers_sz, params.image_input).to(device)
@@ -74,6 +74,7 @@ class ControllerDQN(nn.Module):
             self.hard_update()
             self.stop_criterion.update_mask(self.pruner.get_mask_to_prune(self.prune_percent))
             self.pruner.epoch_step()
+            self.metrics["weights"].add(self.pruner.get_all_weights())
             self.metrics.add_barrier(Barrier.EPOCH)
 
         if len(self.memory) < self.batch_size:

@@ -1,12 +1,16 @@
 import plotly as plt
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
 import argparse
 import os
 import re
+import math
 
 import torch
 import numpy as np
 import pandas as pd
+import json
 
 from metrics import Barrier
 
@@ -106,6 +110,11 @@ def load_data(logpath, plotpath, repeat=None):
 
     paths = [os.path.join("logdir", d) for d in os.listdir("logdir")]
     paths = list(filter(lambda x: x.startswith(logpath), paths))
+
+
+    if len(paths) != repeat:
+        print("Warning: not all repeats! {}".format(paths))
+
     data_list = list()
     for path in paths:
         data_list.append(load_csv(os.path.join(path, plotpath)))
@@ -114,16 +123,42 @@ def load_data(logpath, plotpath, repeat=None):
     return data
 
 
+def create_distributions_plots(logpath, repeat=None):
+    assert repeat is None
+
+    paths = get_paths(os.path.join(logpath, "plots"), "weights")
+    assert(len(paths) == 1)
+    path = paths[0]
+
+
+    data = load_data(logpath, os.path.join("plots", path), repeat).squeeze(1)
+
+    sz = len(data)
+    n = int(math.sqrt(sz - 1e-9)) + 1
+    plot = make_subplots(rows=n, cols=n, start_cell="top-left") 
+
+    for i, sweights in enumerate(data):
+        if sweights in Barrier.values():
+            continue
+
+        weights = json.loads(sweights)
+        plot.add_trace(go.Histogram(x=weights), row=i//n + 1, col=i%n + 1)
+        
+    return plot
+
 def add_rewards(plot, logpath, use_steps=True, repeat=None):
     if repeat is None:
         dirpath = logpath
     else:
-        dirpath = logpath + "_repeat_0"
+        paths = [os.path.join("logdir", d) for d in os.listdir("logdir")]
+        paths = list(filter(lambda x: x.startswith(logpath), paths))
+        dirpath = paths[0]
 
     paths = get_paths(os.path.join(dirpath, "plots"), "Exploit")
+
     for path in paths:
         data = load_data(logpath, os.path.join("plots", path), repeat)
-        add_reward_trace(plot, data, use_steps=use_steps, avg_epochs=400, name=logpath + path)
+        add_reward_trace(plot, data, use_steps=use_steps, avg_epochs=len(data)//10, name=logpath + path)
 
     return plot
 
@@ -167,3 +202,6 @@ if __name__ == "__main__":
 
     #  data = load_csv(os.path.join(logpath, "plots", "stability.csv"))[1]
     #  create_metric_plot(np.squeeze(data), avg_epochs=1).show()
+
+    weights_plot = create_distributions_plots(logpath, repeat=args.repeat)
+    plt.offline.plot(weights_plot, filename="generated/weights_plot.html")

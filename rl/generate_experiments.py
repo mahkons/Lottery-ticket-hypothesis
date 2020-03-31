@@ -16,13 +16,13 @@ from launch_parallel import make_pruner
 def generate_experiments():
     exp_list = list()
     custom_params = DQNConfig(
-        memory_config = ReplayMemoryConfig(1000000),
+        memory_config = ReplayMemoryConfig(200000),
         optimizer_config = AdamConfig(1e-3),
         batch_size = 64,
         gamma = 0.99,
         eps_start = 0.9,
         eps_end = 0.05,
-        eps_decay = 5000,
+        eps_decay = 20000,
         target_net_update_steps = 5000,
         layers_sz = [256, 128],
         image_input = False,
@@ -30,7 +30,7 @@ def generate_experiments():
     )
 
     custom_experiment = Experiment(
-        opt_steps = 500,
+        opt_steps = 1000 * 1000,
         episodes = 10**10,
         prune_iters = 1,
         prune_percent = 0,
@@ -43,17 +43,27 @@ def generate_experiments():
         pruner = make_pruner(rewind_epoch=0, rescale=False, pruner_constructor=LayerwisePruner),
     )
 
-    for lr in [0.1, 0.05, 0.02, 0.01, 0.005, 0.003, 0.002, 0.001, 0.0008, 0.0005, 0.0001]:
-        for repeat in range(4):
-            random_seed = random.randint(0, 10**9)
+    for lr in [0.001]:
+        for batch_size in [64]:
+            for gamma in [0.99, 0.995, 0.999]:
+                for eps_decay in [20000]:
+                    for target_net_update_steps in [2500, 5000, 10000, 20000]:
 
-            exp = deepcopy(custom_experiment)
-            exp.logname = "search_lr={}_repeat_{}".format(lr, repeat)
-            exp.random_seed = random_seed
+                        for repeat in range(5):
+                            random_seed = random.randint(0, 10**9)
 
-            exp.hyperparams.optimizer_config.lr = lr
+                            exp = deepcopy(custom_experiment)
+                            exp.logname = "search_lr={}_batch_size={}_gamma={}_epsdecay={}_targetnetupdate={}_repeat_{}". \
+                                format(lr, batch_size, gamma, eps_decay, target_net_update_steps, repeat)
+                            exp.random_seed = random_seed
 
-            exp_list.append(exp)
+                            exp.hyperparams.optimizer_config.lr = lr
+                            exp.hyperparams.batch_size = batch_size
+                            exp.hyperparams.gamma = gamma
+                            exp.hyperparams.eps_decay = eps_decay
+                            exp.hyperparams.target_net_update_steps = target_net_update_steps
+
+                            exp_list.append(exp)
 
 
     torch.save(exp_list, "generated/exp_list")

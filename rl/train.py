@@ -130,7 +130,7 @@ if __name__ == "__main__":
             device = device,
             logname = args.logname,
             random_seed = RANDOM_SEED,
-            env = LunarLander(random_state=RANDOM_SEED),
+            env = LunarLander,
             hyperparams = LunarLanderConfig(),
             stop_criterion = MaskDiffStop(eps=0),
             pruner = lambda net: RewindWrapper(ERPruner(net, device), 0, rescale=False),

@@ -38,3 +38,6 @@ class RewindWrapper():
     def prune_net(self, p):
         self.pruner.prune_net(p)
 
+    def get_all_weights(self):
+        return self.pruner.get_all_weights()
+

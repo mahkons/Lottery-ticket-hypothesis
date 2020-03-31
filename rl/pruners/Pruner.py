@@ -21,6 +21,12 @@ class Pruner():
             param.data = self.net_init_state[name].clone().detach()
             param.data[~self.mask[name]] = 0
 
+    def get_all_weights(self):
+        full_data = list()
+        for name, param in self.net.named_parameters():
+            full_data.append(param.data[self.mask[name]].reshape(-1))
+        return torch.cat(full_data)
+
     def optimization_step(self):
         self.zero_unmasked()
 
