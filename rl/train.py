@@ -74,6 +74,8 @@ def train(experiment):
             if controller.optimization_completed() and not iter + 1 == prune_iters: # no stop on last iteration
                 break
 
+            torch.cuda.empty_cache()
+
         controller.prune()
         controller.reinit()
 
