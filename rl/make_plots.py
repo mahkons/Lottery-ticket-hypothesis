@@ -23,11 +23,16 @@ def add_avg_trace(plot, x, y, name, avg_epochs, color=None):
 
 def make_smooth(y, avg_epochs=1):
     ny = list()
-    cur_val = y[0]
+    
+    cur_count = 0
+    cur_val = 0
     for i in range(len(y)):
-        cur_val -= y[max(0, i - avg_epochs)] / avg_epochs
-        cur_val += y[i] / avg_epochs
-        ny.append(cur_val)
+        cur_count = min(cur_count + 1, avg_epochs)
+        if i >= avg_epochs:
+            cur_val -= y[i - avg_epochs]
+        cur_val += y[i]
+
+        ny.append(cur_val / cur_count)
 
     return ny
 
@@ -137,12 +142,14 @@ def create_distributions_plots(logpath, repeat=None):
     n = int(math.sqrt(sz - 1e-9)) + 1
     plot = make_subplots(rows=n, cols=n, start_cell="top-left") 
 
-    for i, sweights in enumerate(data):
+    pos = 0
+    for sweights in data:
         if sweights in Barrier.values():
             continue
 
         weights = json.loads(sweights)
-        plot.add_trace(go.Histogram(x=weights), row=i//n + 1, col=i%n + 1)
+        plot.add_trace(go.Histogram(x=weights), row=pos//n + 1, col=pos%n + 1)
+        pos += 1
         
     return plot
 
@@ -158,7 +165,7 @@ def add_rewards(plot, logpath, use_steps=True, repeat=None):
 
     for path in paths:
         data = load_data(logpath, os.path.join("plots", path), repeat)
-        add_reward_trace(plot, data, use_steps=use_steps, avg_epochs=len(data)//10, name=logpath + path)
+        add_reward_trace(plot, data, use_steps=use_steps, avg_epochs=len(data)//20, name=logpath + path)
 
     return plot
 

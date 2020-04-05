@@ -19,14 +19,14 @@ def CartPoleConfig():
 
 def LunarLanderConfig():
     return DQNConfig(
-        memory_config = ReplayMemoryConfig(1000000),
+        memory_config = ReplayMemoryConfig(200000),
         optimizer_config = AdamConfig(1e-3),
         batch_size = 64,
         gamma = 0.99,
         eps_start = 0.9,
         eps_end = 0.05,
         eps_decay = 20000,
-        target_net_update_steps = 10000,
+        target_net_update_steps = 2500,
         layers_sz = [256, 128],
         image_input = False,
 
@@ -48,8 +48,8 @@ def AtariConfig():
         gamma = 0.99,
         eps_start = 0.9,
         eps_end = 0.05,
-        eps_decay = 5000,
-        target_net_update_steps = 5000,
+        eps_decay = 50000,
+        target_net_update_steps = 2500,
         layers_sz = [0], # tensorboardX fails to save with None or empty list hyperparam #TODO fix
         image_input = True,
 
