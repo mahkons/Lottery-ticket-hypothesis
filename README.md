@@ -42,10 +42,11 @@ And an application of this hypothesis to reinforcement learning
 [Adaptive sparse connectivity](https://www.nature.com/articles/s41467-018-04316-3) -- ?? TODO  
 [Overparametrized networks provably optimized](https://arxiv.org/abs/1810.02054)--gradient descent on overparametrized networks  
 [Rethinking the Value of Network Pruning](https://arxiv.org/abs/1810.05270)--structured with random reinit  
+[Transformed l1 regularisation for learning sparse DNNs](https://arxiv.org/pdf/1901.01021.pdf) -- something about l1 reg  
+[Revisiting l1 regularisation for connection pruning](https://openreview.net/pdf?id=r1exVhActQ) -- something about l1 reg  
 [Deconstructing Lottery Tickets](https://arxiv.org/abs/1905.01067)--lottery ticket signs + supermasks  
 [Sparse Networks from Scratch](https://arxiv.org/abs/1907.04840)--sparse momentum  
 [Making All Tickets Winners](https://arxiv.org/pdf/1911.11134.pdf) -- ?? RIGL  
-[Revisiting l1 regularisation for connection pruning](https://openreview.net/pdf?id=r1exVhActQ) -- something about l1 reg  
 [On Iterative Neural Network Pruning](https://arxiv.org/abs/2001.05050)--pruning methods summary  
 [Proving the Lottery Ticket](https://arxiv.org/abs/2002.00585)--??  
 [Improving Reliability of Lottery Tickets](https://arxiv.org/abs/2002.03875)--??  
