@@ -1,9 +1,10 @@
 # Compare Pruners
 
-GlobalPruner -- prunes weights with the smallest magnitude in network  
+GlobalPruner -- prunes weights with the smallest magnitude  
 LayerwisePruner -- prunes weights with the smallest magnitude in each layer. Does not prune biases  
 ERPruner -- like layerwise, but prunes big layers more, than small ones. Does not prune biases
 
+Plots averaged over four experiments  
 
 ![100%](/docs/Compare100.png)  
 ![51%](/docs/Compare51.png)  
