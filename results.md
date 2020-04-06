@@ -5,10 +5,8 @@
     Plot averaged over 4 experiments  
 
 - Launch Layerwise, Global and ERPruners  
-    TODO add plot  
+    [ComparePruners](/docs/ComparePruners.md)
 
-- Compare pruners, choose one for further experiments  
-    TODO add text  
 - Use rescaling after pruning  
     TODO add plot  
 - Use bigger network  
