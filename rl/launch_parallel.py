@@ -13,11 +13,11 @@ from agent.stop_criterions import MaskDiffStop, EarlyBirdStop, NoStop
 
 device = None
 
-def make_pruner__(rewind_epoch, rescale, pruner_constructor, net):
-    return RewindWrapper(pruner_constructor(net, device), rewind_epoch, rescale=rescale)
+def make_pruner__(rewind_epoch, rescale, reinit_to_random, pruner_constructor, net):
+    return RewindWrapper(pruner_constructor(net, device), rewind_epoch, rescale=rescale, reinit_to_random=reinit_to_random)
 
-def make_pruner(rewind_epoch, rescale, pruner_constructor):
-    return partial(make_pruner__, rewind_epoch, rescale, pruner_constructor)
+def make_pruner(rewind_epoch, rescale, reinit_to_random, pruner_constructor):
+    return partial(make_pruner__, rewind_epoch, rescale, reinit_to_random, pruner_constructor)
 
 def load_experiments(exp_path, device):
     exp_list = torch.load(exp_path)

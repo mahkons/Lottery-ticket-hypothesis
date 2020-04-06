@@ -14,7 +14,6 @@ import json
 
 from metrics import Barrier
 
-
 def add_trace(plot, x, y, name, color=None):
     plot.add_trace(go.Scatter(x=x, y=y, name=name, line_color=color))
 
@@ -198,6 +197,7 @@ if __name__ == "__main__":
 
     
     rewards_plot = go.Figure()
+    rewards_plot.update_layout(title="LunarLander", xaxis_title="Optimization step", yaxis_title="Reward")
 
     for logpath in logpaths:
         add_rewards(rewards_plot, logpath, use_steps=True, repeat=args.repeat)
@@ -210,5 +210,5 @@ if __name__ == "__main__":
     #  data = load_csv(os.path.join(logpath, "plots", "stability.csv"))[1]
     #  create_metric_plot(np.squeeze(data), avg_epochs=1).show()
 
-    weights_plot = create_distributions_plots(logpath, repeat=args.repeat)
-    plt.offline.plot(weights_plot, filename="generated/weights_plot.html")
+    #  weights_plot = create_distributions_plots(logpath, repeat=args.repeat)
+    #  plt.offline.plot(weights_plot, filename="generated/weights_plot.html")

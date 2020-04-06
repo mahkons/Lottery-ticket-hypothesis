@@ -30,9 +30,9 @@ def generate_experiments():
     )
 
     custom_experiment = Experiment(
-        opt_steps = 1000*1000,
+        opt_steps = 1,
         episodes = 10**10,
-        prune_iters = 15,
+        prune_iters = 3,
         prune_percent = 20,
         device = None,
         logname = None,
@@ -40,15 +40,15 @@ def generate_experiments():
         env = LunarLander,
         hyperparams = custom_params,
         stop_criterion = MaskDiffStop(eps=0),
-        pruner = make_pruner(rewind_epoch=0, rescale=False, pruner_constructor=ERPruner),
+        pruner = make_pruner(rewind_epoch=0, rescale=True, pruner_constructor=GlobalPruner, reinit_to_random=False),
     )
 
     for repeat in range(4):
         random_seed = random.randint(0, 10**9)
 
         exp = deepcopy(custom_experiment)
-        exp.logname = "{}_pruner_repeat_{}". \
-            format("ER", repeat)
+        exp.logname = "GlobalPruner_rescale_repeat_{}". \
+            format(repeat)
         exp.random_seed = random_seed
 
         exp_list.append(exp)

@@ -48,7 +48,7 @@ def AtariConfig():
         gamma = 0.99,
         eps_start = 0.9,
         eps_end = 0.05,
-        eps_decay = 50000,
+        eps_decay = 20000,
         target_net_update_steps = 2500,
         layers_sz = [0], # tensorboardX fails to save with None or empty list hyperparam #TODO fix
         image_input = True,

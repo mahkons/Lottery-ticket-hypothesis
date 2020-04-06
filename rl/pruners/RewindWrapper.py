@@ -1,12 +1,13 @@
-
+import torch.nn as nn
 
 # After reinit_epochs saves current weights
 # Next pruner reinits will return to those weights
 class RewindWrapper():
-    def __init__(self, pruner, reinit_epochs, rescale=False):
+    def __init__(self, pruner, reinit_epochs, rescale=False, reinit_to_random=False):
         self.pruner = pruner
         self.reinit_epochs = reinit_epochs
         self.rescale = rescale
+        self.reinit_to_random = reinit_to_random
 
         self.pruner_epoch = 0
 
@@ -20,6 +21,15 @@ class RewindWrapper():
         # do not update pruner_epoch
         # rewind always to same epoch
         self.pruner.reinit_net()
+
+        if self.reinit_to_random:
+            for module in self.pruner.net.modules():
+                if module == self.pruner.net or \
+                    isinstance(module, nn.Sequential) or \
+                    isinstance(module, nn.ReLU):
+                    continue
+
+                module.reset_parameters()
 
         if self.rescale:
             for name, param in self.pruner.net.named_parameters():
