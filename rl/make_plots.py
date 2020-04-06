@@ -197,7 +197,7 @@ if __name__ == "__main__":
 
     
     rewards_plot = go.Figure()
-    rewards_plot.update_layout(title="LunarLander", xaxis_title="Optimization step", yaxis_title="Reward")
+    rewards_plot.update_layout(title="Rewards", xaxis_title="Optimization step", yaxis_title="Reward")
 
     for logpath in logpaths:
         add_rewards(rewards_plot, logpath, use_steps=True, repeat=args.repeat)

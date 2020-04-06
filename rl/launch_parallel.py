@@ -19,10 +19,25 @@ def make_pruner__(rewind_epoch, rescale, reinit_to_random, pruner_constructor, n
 def make_pruner(rewind_epoch, rescale, reinit_to_random, pruner_constructor):
     return partial(make_pruner__, rewind_epoch, rescale, reinit_to_random, pruner_constructor)
 
-def load_experiments(exp_path, device):
+def load_experiments(exp_path, sdevice):
     exp_list = torch.load(exp_path)
+    
+    # TODO a better way to choose cuda device for experiment
+    # by the way only 4 experiments and 4 cuda is common case
+    count = 0
     for exp in exp_list:
+        if sdevice == "cpu":
+            device = torch.device("cpu")
+        elif sdevice == "cuda":
+            device = torch.device("cuda:" + str(count % torch.cuda.device_count()))
+            device=torch.device("cuda")
+        else:
+            assert False
+
+        print(device)
         exp.device = device
+
+        count += 1
 
     return exp_list
 
@@ -42,5 +57,4 @@ def create_parser():
 
 if __name__ == "__main__":
     args = create_parser().parse_args()
-    device = torch.device(args.device)
-    launch_experiments(load_experiments(args.exp_path, device), args.processes)
+    launch_experiments(load_experiments(args.exp_path, args.device), args.processes)
