@@ -1,9 +1,12 @@
 # Current results
 
 - Find more or less optimal hyperparameters for DQN-LunarLander  
-    ![LunarLander](/docs/LunarLanderSimple.png) 
+    ![LunarLander](/docs/LunarLanderSimple.png)  
+    Plot averaged over 4 experiments  
+
 - Launch Layerwise, Global and ERPruners  
     TODO add plot  
+
 - Compare pruners, choose one for further experiments  
     TODO add text  
 - Use rescaling after pruning  
