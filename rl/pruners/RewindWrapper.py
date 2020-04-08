@@ -3,7 +3,7 @@ import torch.nn as nn
 # After reinit_epochs saves current weights
 # Next pruner reinits will return to those weights
 class RewindWrapper():
-    def __init__(self, pruner, reinit_epochs, rescale=False, reinit_to_random=False):
+    def __init__(self, pruner, reinit_epochs, rescale=None, reinit_to_random=False):
         self.pruner = pruner
         self.reinit_epochs = reinit_epochs
         self.rescale = rescale
@@ -31,9 +31,9 @@ class RewindWrapper():
 
                 module.reset_parameters()
 
-        if self.rescale:
+        if self.rescale is not None:
             for name, param in self.pruner.net.named_parameters():
-                scaling_factor = self.pruner.net_init_state[name].abs().sum() / param.data.abs().sum()
+                scaling_factor = self.rescale(self.pruner.net_init_state[name], self.pruner.mask[name])
                 param.data *= scaling_factor
 
     def optimization_step(self):

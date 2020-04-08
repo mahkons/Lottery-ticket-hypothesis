@@ -24,30 +24,30 @@ def generate_experiments():
         eps_end = 0.05,
         eps_decay = 20000,
         target_net_update_steps = 2500,
-        layers_sz = [256, 128],
+        layers_sz = [2048, 512],
         image_input = False,
         best_model_path = ":(",
     )
 
     custom_experiment = Experiment(
-        opt_steps = 1,
+        opt_steps = 1000*1000,
         episodes = 10**10,
-        prune_iters = 3,
-        prune_percent = 20,
+        prune_iters = 10,
+        prune_percent = 50,
         device = None,
         logname = None,
         random_seed = None,
         env = LunarLander,
         hyperparams = custom_params,
         stop_criterion = MaskDiffStop(eps=0),
-        pruner = make_pruner(rewind_epoch=0, rescale=True, pruner_constructor=GlobalPruner, reinit_to_random=False),
+        pruner = make_pruner(rewind_epoch=0, rescale=False, pruner_constructor=ERPruner, reinit_to_random=False),
     )
 
     for repeat in range(4):
         random_seed = random.randint(0, 10**9)
 
         exp = deepcopy(custom_experiment)
-        exp.logname = "GlobalPruner_rescale_repeat_{}". \
+        exp.logname = "BigNet_ERPruner_repeat_{}". \
             format(repeat)
         exp.random_seed = random_seed
 

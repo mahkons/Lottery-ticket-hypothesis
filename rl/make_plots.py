@@ -147,6 +147,7 @@ def create_distributions_plots(logpath, repeat=None):
             continue
 
         weights = json.loads(sweights)
+        print(len(weights))
         plot.add_trace(go.Histogram(x=weights), row=pos//n + 1, col=pos%n + 1)
         pos += 1
         

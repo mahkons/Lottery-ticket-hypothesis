@@ -30,7 +30,6 @@ def load_experiments(exp_path, sdevice):
             device = torch.device("cpu")
         elif sdevice == "cuda":
             device = torch.device("cuda:" + str(count % torch.cuda.device_count()))
-            device=torch.device("cuda")
         else:
             assert False
 
