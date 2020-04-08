@@ -50,6 +50,7 @@ And an application of this hypothesis to reinforcement learning
 [On Iterative Neural Network Pruning](https://arxiv.org/abs/2001.05050)--pruning methods summary  
 [Proving the Lottery Ticket](https://arxiv.org/abs/2002.00585)--??  
 [Improving Reliability of Lottery Tickets](https://arxiv.org/abs/2002.03875)--??  
+[Pruning untrained neural networks](https://arxiv.org/pdf/2002.08797.pdf) -- ??  
 
 ### Is it possible to make it fast?
 [Efficient Inference Engine](https://arxiv.org/abs/1602.01528)--??  
