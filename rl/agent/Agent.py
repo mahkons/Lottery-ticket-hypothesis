@@ -7,13 +7,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class Agent:
-    def __init__(self, env, controller, device):
+    def __init__(self, env, controller):
         self.env = env
         self.controller = controller
-        self.device = device
 
     def wrap(self, x, dtype=torch.float):
-        return torch.tensor([x], dtype=dtype, device=self.device)
+        return torch.tensor([x], dtype=dtype)
 
     def rollout(self, train, show=False):
         state = self.wrap(self.env.reset())

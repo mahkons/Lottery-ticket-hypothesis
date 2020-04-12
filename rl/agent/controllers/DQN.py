@@ -52,13 +52,16 @@ class ControllerDQN(nn.Module):
             return random.randrange(self.action_sz)
         else:
             with torch.no_grad():
-                return self.net(state).max(1)[1].item()
+                return self.net(state.to(self.device)).max(1)[1].item()
 
     def hard_update(self):
         self.target_net.load_state_dict(self.net.state_dict())
 
+    def all_to_device(self, xs):
+        return map(lambda x: x.to(self.device), xs)
+
     def calc_loss(self):
-        state, action, next_state, reward, done = self.memory.sample(self.batch_size)
+        state, action, next_state, reward, done = self.all_to_device(self.memory.sample(self.batch_size))
 
         state_action_values = self.net(state).gather(1, action.unsqueeze(1))
         with torch.no_grad():

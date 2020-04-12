@@ -43,7 +43,7 @@ def train(experiment):
             stop_criterion = experiment.stop_criterion,
             device = experiment.device
         )
-    agent = Agent(env, controller, device=experiment.device)
+    agent = Agent(env, controller)
 
     EXPLORE_ITERS = 1
     EXPLOIT_ITERS = 1
@@ -133,10 +133,10 @@ if __name__ == "__main__":
             device = device,
             logname = args.logname,
             random_seed = RANDOM_SEED,
-            env = LunarLander,
-            hyperparams = LunarLanderConfig(),
+            env = Breakout,
+            hyperparams = AtariConfig(),
             stop_criterion = MaskDiffStop(eps=0),
-            pruner = lambda net: RewindWrapper(GlobalPruner(net, device), 0, rescale=L2LocalRescale(), reinit_to_random=False),
+            pruner = lambda net: RewindWrapper(GlobalPruner(net, device), 0, rescale=None, reinit_to_random=False),
         )
 
     start_experiment(experiment)
