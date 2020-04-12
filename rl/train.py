@@ -109,7 +109,7 @@ def init_random_seeds(RANDOM_SEED, cuda_determenistic):
 
 
 def start_experiment(experiment):
-    init_random_seeds(experiment.random_seed, cuda_determenistic=True)
+    init_random_seeds(experiment.random_seed, cuda_determenistic=False)
     init_logger("logdir", experiment.logname)
     log().update_params(experiment.to_dict())
 
