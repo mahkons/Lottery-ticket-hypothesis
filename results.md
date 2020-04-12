@@ -8,11 +8,12 @@
     [ComparePruners](/docs/ComparePruners.md)
 
 - Use rescaling after pruning  
-    TODO add plot  
+    [RescaleStrategies](/docs/RescaleStrategies.md)  
 - Use bigger network  
-    TODO it works?  
+    [BigNet](/docs/BigNet.md)  
 - Reinitialize network not to initial random weights, but some weights later in training  
     TODO It works?  
 
 ### Other experiments
 - Early stop criterions  
+- Atari  
