@@ -1,7 +1,7 @@
 # BigNet
 
 It starts learning!  
-[BigNet](http://www.googledrive.com/host/1kqhZ0ITvDltHLpISnOKFoyb4u8OV6GBV)  
+[BigNet](https://drive.google.com/open?id=1kqhZ0ITvDltHLpISnOKFoyb4u8OV6GBV)  
 Probably it could learn on first iteration with right hyperparams?  
 Does our way of pruning work, or just random would perform similiar?  
 
