@@ -43,13 +43,13 @@ def BigLunarLanderConfig():
 def AtariConfig():
     return DQNConfig(
         memory_config = ReplayMemoryConfig(1000000),
-        optimizer_config = AdamConfig(1e-3),
+        optimizer_config = AdamConfig(1e-5),
         batch_size = 64,
         gamma = 0.99,
         eps_start = 0.9,
         eps_end = 0.05,
-        eps_decay = 20000,
-        target_net_update_steps = 2500,
+        eps_decay = 50000,
+        target_net_update_steps = 10000,
         layers_sz = [0], # tensorboardX fails to save with None or empty list hyperparam #TODO fix
         image_input = True,
 

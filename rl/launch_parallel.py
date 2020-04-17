@@ -49,8 +49,8 @@ def launch_experiments(exp_list, processes=4):
 def create_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('--processes', type=int, default=4, required=False)
-    parser.add_argument('--device', type=str, default='cpu', required=False)
-    parser.add_argument('--exp-path', type=str, required=True)
+    parser.add_argument('--device', type=str, default="cpu", required=False)
+    parser.add_argument('--exp-path', type=str, default="generated/exp_list", required=False)
     return parser
 
 
