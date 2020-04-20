@@ -13,7 +13,7 @@ from make_plots import create_reward_plot, create_metric_plot
 from logger.Logger import log, init_logger
 
 from configs import Experiment
-from envs import CartPole, LunarLander, Pong, Breakout, Assault, Enduro, RoadRunner, SpaceInvaders
+from envs import CartPole, LunarLander, Pong, Breakout, Assault, Enduro, RoadRunner, SpaceInvaders, LunarLanderWithNoise
 from params import CartPoleConfig, LunarLanderConfig, AtariConfig, BigLunarLanderConfig
 from pruners import LayerwisePruner, GlobalPruner, ERPruner, RewindWrapper
 from pruners import L1GlobalRescale, L1LocalRescale, L2LocalRescale, L2GlobalRescale
@@ -133,8 +133,8 @@ if __name__ == "__main__":
             device = device,
             logname = args.logname,
             random_seed = RANDOM_SEED,
-            env = Enduro,
-            hyperparams = AtariConfig(),
+            env = LunarLanderWithNoise,
+            hyperparams = LunarLanderConfig(),
             stop_criterion = MaskDiffStop(eps=0),
             pruner = lambda net: RewindWrapper(GlobalPruner(net, device), 0, rescale=None, reinit_to_random=False),
         )

@@ -18,7 +18,7 @@ def generate_experiments():
     exp_list = list()
     custom_params = DQNConfig(
         memory_config = ReplayMemoryConfig(1000*1000),
-        optimizer_config = AdamConfig(1e-6),
+        optimizer_config = AdamConfig(5e-5),
         batch_size = 64,
         gamma = 0.99,
         eps_start = 0.9,
@@ -48,7 +48,7 @@ def generate_experiments():
         random_seed = random.randint(0, 10**9)
 
         exp = deepcopy(custom_experiment)
-        exp.logname = env.__name__ + "_lr=1e-6"
+        exp.logname = env.__name__ + "_lr=5e-5"
         exp.random_seed = random_seed
         exp.env = env
 

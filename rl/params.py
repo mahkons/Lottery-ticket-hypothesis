@@ -30,7 +30,8 @@ def LunarLanderConfig():
         layers_sz = [256, 128],
         image_input = False,
 
-        best_model_path = "metrics/reference_models/LunarLander",
+        #  best_model_path = "metrics/reference_models/LunarLander",
+        best_model_path = ":(",
     )
 
 def BigLunarLanderConfig():
