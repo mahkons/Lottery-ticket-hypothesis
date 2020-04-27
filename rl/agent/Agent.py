@@ -35,5 +35,5 @@ class Agent:
             state = next_state
             if done:
                 break;
-        return self.env.total_reward, self.env.steps
+        return self.env.get_total_reward(), self.env.get_steps()
 

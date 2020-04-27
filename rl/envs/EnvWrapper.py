@@ -15,6 +15,7 @@ class EnvWrapper():
         obs, reward, done, info = self.env.step(action)
         real_reward = reward
         self.total_reward += real_reward
+        self.steps += 1
 
         obs = self.transform_obs(obs)
         reward = self.shape_reward(obs, reward, done)
@@ -30,6 +31,12 @@ class EnvWrapper():
 
     def render(self):
         self.env.render()
+
+    def get_steps(self):
+        return self.steps
+
+    def get_total_reward(self):
+        return self.total_reward
 
     def shape_reward(self, obs, reward, done):
         return reward

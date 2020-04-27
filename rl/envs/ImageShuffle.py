@@ -34,10 +34,6 @@ class ImageShuffle():
     def step(self, action):
         obs, reward, done, info, real_reward = self.env.step(action)
         obs = self.shuffle_image(obs)
-
-        self.steps = self.env.steps
-        self.total_reward = self.env.total_reward
-
         return obs, reward, done, info, real_reward
 
     def reset(self):
@@ -48,3 +44,9 @@ class ImageShuffle():
 
     def render(self):
         self.env.render()
+
+    def get_steps(self):
+        return self.env.get_steps()
+
+    def get_total_reward(self):
+        return self.env.get_total_reward()
