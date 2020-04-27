@@ -16,6 +16,9 @@ class OptimizerConfig(Config):
     def __init__(self):
         pass
 
+    def create_optimizer(self):
+        raise NotImplementedError()
+
 
 class MemoryConfig(Config):
     def __init__(self):

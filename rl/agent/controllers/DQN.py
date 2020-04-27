@@ -26,6 +26,7 @@ class ControllerDQN(nn.Module):
         self.batch_size = params.batch_size
         self.gamma = params.gamma
         self.target_net_update_steps = params.target_net_update_steps
+        self.optimizer_config = params.optimizer_config
 
         self.net = DQN(self.state_sz, self.action_sz, params.layers_sz, params.image_input).to(device)
         self.target_net = DQN(self.state_sz, self.action_sz, params.layers_sz, params.image_input).to(device)
@@ -33,7 +34,7 @@ class ControllerDQN(nn.Module):
         self.prune_percent = prune_percent
         self.pruner = pruner(self.net)
         self.stop_criterion = stop_criterion
-        self.optimizer = torch.optim.Adam(self.net.parameters(), lr=params.optimizer_config.lr)
+        self.optimizer = self.optimizer_config.create_optimizer(self.net.parameters())
 
         self.steps_done = 0
 
@@ -101,7 +102,7 @@ class ControllerDQN(nn.Module):
         self.metrics["weights"].add(self.pruner.get_all_weights())
         self.memory.clean()
         self.steps_done = 0
-        self.optimizer = torch.optim.Adam(self.net.parameters(), lr=self.params.optimizer_config.lr)
+        self.optimizer = self.optimizer_config.create_optimizer(self.net.parameters())
         self.stop_criterion.reset()
 
         # Next iteration target net will start with NOT cool parameters
