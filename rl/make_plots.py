@@ -165,7 +165,7 @@ def add_rewards(plot, logpath, use_steps=True, repeat=None):
 
     for path in paths:
         data = load_data(logpath, os.path.join("plots", path), repeat)
-        add_reward_trace(plot, data, use_steps=use_steps, avg_epochs=len(data)//20, name=logpath + path)
+        add_reward_trace(plot, data, use_steps=use_steps, avg_epochs=len(data)//20 + 1, name=logpath + path)
 
     return plot
 

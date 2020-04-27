@@ -1,6 +1,6 @@
+from .StopCriterion import StopCriterion
 
-
-class MaskDiffStop():
+class MaskDiffStop(StopCriterion):
     def __init__(self, eps=0.01):
         self.mask_dict = None
         self.stop = False

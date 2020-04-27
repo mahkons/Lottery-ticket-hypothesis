@@ -1,8 +1,10 @@
 from collections import deque
 from itertools import combinations
 
+from .StopCriterion import StopCriterion
 
-class EarlyBirdStop():
+
+class EarlyBirdStop(StopCriterion):
     def __init__(self, eps=0.01, queue_size=5):
         self.mask_queue = deque(maxlen=queue_size)
         self.stop = False
