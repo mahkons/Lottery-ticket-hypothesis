@@ -8,7 +8,7 @@ from envs.EnvWrapper import EnvWrapper
 class AtariWrapper(EnvWrapper):
     def __init__(self, name, random_state):
         super(AtariWrapper, self).__init__(name, random_state)
-        self.state_sz = (84, 84, 4)
+        self.state_sz = (4, 84, 84)
 
         # keeps 4 previous obseravations
         self.q = deque(maxlen=4)

@@ -5,6 +5,7 @@ import argparse
 import random
 import os
 import datetime
+from functools import partial
 
 from agent.Agent import Agent
 from agent.memory.ReplayMemory import ReplayMemory
@@ -14,6 +15,7 @@ from logger.Logger import log, init_logger
 
 from configs import Experiment
 from envs import CartPole, LunarLander, Pong, Breakout, Assault, Enduro, RoadRunner, SpaceInvaders, LunarLanderWithNoise
+from envs import ImageShuffle
 from params import CartPoleConfig, LunarLanderConfig, AtariConfig, BigLunarLanderConfig
 from pruners import LayerwisePruner, GlobalPruner, ERPruner, RewindWrapper
 from pruners import L1GlobalRescale, L1LocalRescale, L2LocalRescale, L2GlobalRescale
@@ -133,8 +135,8 @@ if __name__ == "__main__":
             device = device,
             logname = args.logname,
             random_seed = RANDOM_SEED,
-            env = LunarLander,
-            hyperparams = LunarLanderConfig(),
+            env = partial(ImageShuffle, 2, (2, 3, 0, 1), Assault),
+            hyperparams = AtariConfig(),
             stop_criterion = FixedEpochsStop(limit_epochs=2),
             pruner = lambda net: RewindWrapper(GlobalPruner(net, device), 0, rescale=None, reinit_to_random=False),
         )
