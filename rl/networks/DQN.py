@@ -12,8 +12,7 @@ class DQN(nn.Module):
         super(DQN, self).__init__()
     
         if image_input:
-            assert layers_sz == [0], "layers configuration for image input is not enabled yet"
-            layers = self.create_atari_layers(action_sz)
+            layers = self.create_atari_layers(action_sz, layers_sz)
         else:
             layers = self.create_linear_layers(state_sz, action_sz, layers_sz)
 
@@ -29,27 +28,53 @@ class DQN(nn.Module):
         return layers
 
     # TODO enable layers size configuration for image input
-    def create_atari_layers(self, action_sz):
-        layers = [
-            nn.Conv2d(
-                in_channels=4,
-                out_channels=16,
-                kernel_size=8,
-                stride=4,
-            ),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(
-                in_channels=16,
-                out_channels=32,
-                kernel_size=4,
-                stride=2,
-            ),
-            nn.ReLU(inplace=True),
-            Flatten(),
-            nn.Linear(2592, 256),
-            nn.ReLU(inplace=True),
-            nn.Linear(256, action_sz)
-        ]
+    def create_atari_layers(self, action_sz, layers_sz):
+        if layers_sz == "classic":
+            layers = [
+                nn.Conv2d(
+                    in_channels=4,
+                    out_channels=16,
+                    kernel_size=8,
+                    stride=4,
+                ),
+                nn.ReLU(inplace=True),
+                nn.Conv2d(
+                    in_channels=16,
+                    out_channels=32,
+                    kernel_size=4,
+                    stride=2,
+                ),
+                nn.ReLU(inplace=True),
+                Flatten(),
+                nn.Linear(2592, 256),
+                nn.ReLU(inplace=True),
+                nn.Linear(256, action_sz)
+            ]
+        elif layers_sz == "big":
+            layers = [
+                nn.Conv2d(
+                    in_channels=4,
+                    out_channels=16,
+                    padding=24,
+                    kernel_size=48,
+                    stride=4,
+                ),
+                nn.ReLU(inplace=True),
+                nn.Conv2d(
+                    in_channels=16,
+                    out_channels=32,
+                    padding=16,
+                    kernel_size=32,
+                    stride=2,
+                ),
+                nn.ReLU(inplace=True),
+                Flatten(),
+                nn.Linear(4608, 256),
+                nn.ReLU(inplace=True),
+                nn.Linear(256, action_sz)
+            ]
+        else:
+            raise ValueError("Incorrect layers_sz")
         return layers
 
     def forward(self, x):

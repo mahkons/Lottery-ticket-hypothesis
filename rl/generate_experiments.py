@@ -6,11 +6,11 @@ from copy import deepcopy
 import random
 
 from configs import Experiment, DQNConfig, ReplayMemoryConfig, AdamConfig
-from envs import LunarLander, Breakout, Assault, Enduro, RoadRunner, SpaceInvaders, LunarLanderWithNoise
+from envs import LunarLander, Breakout, Assault, Enduro, RoadRunner, SpaceInvaders, LunarLanderWithNoise, ImageShuffle
 from params import LunarLanderConfig
 from pruners import RewindWrapper, ERPruner, LayerwisePruner, GlobalPruner
 from pruners import L1GlobalRescale, L1LocalRescale, L2LocalRescale, L2GlobalRescale
-from agent.stop_criterions import MaskDiffStop, EarlyBirdStop, NoStop
+from agent.stop_criterions import MaskDiffStop, EarlyBirdStop, NoStop, FixedEpochsStop
 from launch_parallel import make_pruner
 
 
@@ -23,49 +23,40 @@ def generate_experiments():
         gamma = 0.99,
         eps_start = 0.9,
         eps_end = 0.05,
-        eps_decay = 50000,
+        eps_decay = 100000,
         target_net_update_steps = 10000,
-        layers_sz = [0],
+        layers_sz = "classic",
         image_input = True,
         best_model_path = ":(",
     )
 
     custom_experiment = Experiment(
-        opt_steps = 1000*1000,
+        opt_steps = 500*1000,
         episodes = 10**10,
         prune_iters = 5,
         prune_percent = 30,
         device = None,
         logname = None,
         random_seed = None,
-        env = Assault,
+        env = LunarLanderWithNoise,
         hyperparams = custom_params,
-        stop_criterion = MaskDiffStop(eps=0),
+        stop_criterion = FixedEpochsStop(limit_epochs=10),
         pruner = make_pruner(rewind_epoch=0, rescale=None, pruner_constructor=GlobalPruner, reinit_to_random=False),
     )
 
-    for pruner_c in [GlobalPruner, LayerwisePruner]:
-        for rescale in [None, L2GlobalRescale()]:
+    for env, env_name in [(partial(ImageShuffle, 2, (3, 1, 2, 0), Assault), "AssaultShuffled2"),
+            (partial(ImageShuffle, 4, [12,  2, 10, 11,  3,  9,  1,  4,  8,  0,  7,  6, 14, 15,  5, 13], Assault), "AssaultShuffled4")]:
+        for layers_sz in ["classic", "big"]:
             random_seed = random.randint(0, 10**9)
 
             exp = deepcopy(custom_experiment)
-            exp.logname = "Assault_" + pruner_c.__name__ + "_" + ("L2GlobalRescale" if rescale is not None else "NoRescale")
+            exp.logname = env_name + "_" + layers_sz
             exp.random_seed = random_seed
 
-            pruner = make_pruner(rewind_epoch=0, rescale=rescale, pruner_constructor=pruner_c, reinit_to_random=False)
-            exp.pruner = pruner
-
+            exp.env = env
+            exp.hyperparams.layers_sz = layers_sz
+            
             exp_list.append(exp)
-
-    #  for repeat in range(4):
-        #  random_seed = random.randint(0, 10**9)
-
-        #  exp = deepcopy(custom_experiment)
-        #  exp.logname = "BreakoutNewParams_repeat_{}". \
-            #  format(repeat)
-        #  exp.random_seed = random_seed
-
-        #  exp_list.append(exp)
 
 
     torch.save(exp_list, "generated/exp_list")

@@ -51,8 +51,13 @@ def AtariConfig():
         eps_end = 0.05,
         eps_decay = 100000,
         target_net_update_steps = 10000,
-        layers_sz = [0], # tensorboardX fails to save with None or empty list hyperparam #TODO fix
+        layers_sz = "classic",
         image_input = True,
 
         best_model_path = ":(",
     )
+
+def BigAtariConfig():
+    config = AtariConfig()
+    config.layers_sz = "big"
+    return config
