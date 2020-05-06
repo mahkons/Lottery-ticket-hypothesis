@@ -30,6 +30,8 @@ And an application of this hypothesis to reinforcement learning
 [Drawing early-bird tickets](https://arxiv.org/abs/1909.11957)  
 - Pruning in RL:  
 [Policy Pruning and Shrinking for Deep Reinforcement Learning](https://arxiv.org/abs/2001.05012)  
+- Reliability in RL:  
+[Measuring the Reliability of Reinforcement Learning Algorithms](https://arxiv.org/pdf/1912.05663.pdf)  
 
 
 ### More or less related
