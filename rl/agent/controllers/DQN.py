@@ -125,3 +125,6 @@ class ControllerDQN(nn.Module):
 
     def save_net(self, path):
         torch.save(self.target_net.state_dict(), path)
+
+    def get_state(self):
+        return self.target_net.state_dict()

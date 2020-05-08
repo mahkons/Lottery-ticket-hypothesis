@@ -83,6 +83,7 @@ def train(experiment):
         controller.reinit()
 
         log().save_logs()
+        log().save_model(controller.get_state(), "model:iter{}:{}".format(iter, cur_percent))
 
 
 def create_parser():
@@ -135,8 +136,8 @@ if __name__ == "__main__":
             device = device,
             logname = args.logname,
             random_seed = RANDOM_SEED,
-            env = partial(ImageShuffle, 2, (1, 3, 0, 2), Assault),
-            hyperparams = BigAtariConfig(),
+            env = LunarLander,
+            hyperparams = LunarLanderConfig(),
             stop_criterion = FixedEpochsStop(limit_epochs=10),
             pruner = lambda net: RewindWrapper(GlobalPruner(net, device), 0, rescale=None, reinit_to_random=False),
         )

@@ -1,4 +1,5 @@
 import pandas as pd
+import torch
 import os
 import numpy as np
 from tensorboardX import SummaryWriter
@@ -49,6 +50,11 @@ class Logger():
         self.save_csv()
         # Yet not use it
         # self.save_tensorboard() 
+
+    def save_model(self, model, name):
+        models_path = os.path.join(self.dir, "models")
+        os.makedirs(models_path, exist_ok=True)
+        torch.save(model, os.path.join(models_path, name))
 
     def save_csv(self):
         plot_path = os.path.join(self.dir, "plots")

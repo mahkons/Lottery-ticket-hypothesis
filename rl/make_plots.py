@@ -186,6 +186,12 @@ def create_parser():
 
 
 if __name__ == "__main__":
+    data = load_csv("logdir/EarlyStop_early_bird_0.01/plots/stability.csv")
+    create_metric_plot(np.squeeze(data), avg_epochs=1).show()
+    data = load_csv("logdir/search_lr=0.001_batch_size=64_gamma=0.99_epsdecay=20000_targetnetupdate=2500_repeat_3/plots/stability.csv")
+    create_metric_plot(np.squeeze(data), avg_epochs=1).show()
+    exit(0)
+
     args = create_parser().parse_args() 
     if args.logpath is None:
         logpaths = [get_last_log("logdir")]
@@ -205,10 +211,10 @@ if __name__ == "__main__":
 
     plt.offline.plot(rewards_plot, filename="generated/rewards_plot.html")
 
-    #  data = load_csv(os.path.join(logpath, "plots", "qerror.csv"))[1]
+    #  data = load_csv(os.path.join(logpath, "plots", "qerror.csv"))
     #  create_metric_plot(np.squeeze(data), avg_epochs=10000).show()
 
-    #  data = load_csv(os.path.join(logpath, "plots", "stability.csv"))[1]
+    #  data = load_csv(os.path.join(logpath, "plots", "stability.csv"))
     #  create_metric_plot(np.squeeze(data), avg_epochs=1).show()
 
     #  weights_plot = create_distributions_plots(logpath, repeat=args.repeat)
