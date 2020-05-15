@@ -6,8 +6,8 @@ class ImageShuffle():
         self.permutation = np.array(permutation) if permutation is not None else None
         self.pieces = pieces
 
-        assert(self.env.state_sz[0] % self.pieces == 0)
         assert(self.env.state_sz[1] % self.pieces == 0)
+        assert(self.env.state_sz[2] % self.pieces == 0)
 
         if self.permutation is None:
             self.permutation = np.random.permutation(self.pieces ** 2).reshape((self.pieces, self.pieces))

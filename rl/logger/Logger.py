@@ -4,8 +4,6 @@ import os
 import numpy as np
 from tensorboardX import SummaryWriter
 
-from metrics import Barrier
-
 logger__ = None
 
 def init_logger(logdir, logname):
@@ -71,8 +69,8 @@ class Logger():
         for plot_name, plot_data in self.plots.items():
             for i in range(len(plot_data)):
                 # skip barriers
-                if plot_data[i] in Barrier.values():
-                    continue
+                #  if plot_data[i] in Barrier.values():
+                    #  continue
 
                 # TODO fix ugly ifs
                 if isinstance(plot_data[i], tuple):

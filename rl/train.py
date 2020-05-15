@@ -79,11 +79,12 @@ def train(experiment):
 
             torch.cuda.empty_cache()
 
+        log().save_logs()
+        log().save_model(controller.get_state(), "model:iter{}:{}".format(iter, cur_percent))
+
         controller.prune()
         controller.reinit()
 
-        log().save_logs()
-        log().save_model(controller.get_state(), "model:iter{}:{}".format(iter, cur_percent))
 
 
 def create_parser():

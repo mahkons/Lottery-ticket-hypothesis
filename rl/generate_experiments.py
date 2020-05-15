@@ -25,37 +25,32 @@ def generate_experiments():
         eps_end = 0.05,
         eps_decay = 20000,
         target_net_update_steps = 2500,
-        layers_sz = [],
+        layers_sz = [256, 128],
         image_input = False,
         best_model_path = ":(",
     )
 
     custom_experiment = Experiment(
-        opt_steps = 1000*1000,
+        opt_steps = 10*1000*1000,
         episodes = 10**10,
-        prune_iters = 15,
+        prune_iters = 1,
         prune_percent = 20,
         device = None,
         logname = None,
         random_seed = None,
-        env = Assault,
+        env = LunarLander,
         hyperparams = custom_params,
-        stop_criterion = FixedEpochsStop(limit_epochs=20),
+        stop_criterion = NoStop(),
         pruner = make_pruner(rewind_epoch=0, rescale=L2GlobalRescale(), pruner_constructor=GlobalPruner, reinit_to_random=False),
     )
 
-    for env, name in [(partial(ImageShuffle, 2, (3, 1, 2, 0), Assault), "Shuffled2"),
-            (partial(ImageShuffle, 4, (12, 2, 10, 11, 3, 9, 1, 4, 8, 0, 7, 6, 14, 15, 5, 13), Assault), "Shuffled4"),
-            (Assault, "NotShuffled1"),
-            (Assault, "NotShuffled2")]:
+    for repeat in range(4):
         random_seed = random.randint(0, 10**9)
 
         exp = deepcopy(custom_experiment)
-        exp.logname = "Assault" + name + "Prune"
+        exp.logname = "LongCommonLunarLander_repeat_{}".format(repeat);
         exp.random_seed = random_seed
 
-        exp.env = env
-        
         exp_list.append(exp)
 
 

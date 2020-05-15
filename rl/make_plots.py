@@ -13,6 +13,7 @@ import pandas as pd
 import json
 
 from metrics import Barrier
+from metrics.StabilityPlots import detrend, drawdown, variance, IQR, MAD, CVaR
 
 def add_trace(plot, x, y, name, color=None):
     plot.add_trace(go.Scatter(x=x, y=y, name=name, line_color=color))
@@ -153,7 +154,7 @@ def create_distributions_plots(logpath, repeat=None):
         
     return plot
 
-def add_rewards(plot, logpath, use_steps=True, repeat=None):
+def add_rewards(plot, logpath, use_steps=True, repeat=None, avg_constant=20, transform=lambda x: x):
     if repeat is None:
         dirpath = logpath
     else:
@@ -165,7 +166,8 @@ def add_rewards(plot, logpath, use_steps=True, repeat=None):
 
     for path in paths:
         data = load_data(logpath, os.path.join("plots", path), repeat)
-        add_reward_trace(plot, data, use_steps=use_steps, avg_epochs=len(data)//20 + 1, name=logpath + path)
+        data[:, 2] = transform(data[:, 2])
+        add_reward_trace(plot, data, use_steps=use_steps, avg_epochs=len(data)//avg_constant + 1, name=logpath + path)
 
     return plot
 
@@ -186,12 +188,6 @@ def create_parser():
 
 
 if __name__ == "__main__":
-    data = load_csv("logdir/EarlyStop_early_bird_0.01/plots/stability.csv")
-    create_metric_plot(np.squeeze(data), avg_epochs=1).show()
-    data = load_csv("logdir/search_lr=0.001_batch_size=64_gamma=0.99_epsdecay=20000_targetnetupdate=2500_repeat_3/plots/stability.csv")
-    create_metric_plot(np.squeeze(data), avg_epochs=1).show()
-    exit(0)
-
     args = create_parser().parse_args() 
     if args.logpath is None:
         logpaths = [get_last_log("logdir")]
@@ -206,8 +202,9 @@ if __name__ == "__main__":
     rewards_plot = go.Figure()
     rewards_plot.update_layout(title="Rewards", xaxis_title="Optimization step", yaxis_title="Reward")
 
+    transform = lambda data: CVaR(drawdown(data), 100, 0.1)
     for logpath in logpaths:
-        add_rewards(rewards_plot, logpath, use_steps=True, repeat=args.repeat)
+        add_rewards(rewards_plot, logpath, use_steps=True, repeat=args.repeat, avg_constant=10**10, transform=transform)
 
     plt.offline.plot(rewards_plot, filename="generated/rewards_plot.html")
 

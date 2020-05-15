@@ -1,5 +1,5 @@
 import torch
-from multiprocessing import Pool
+from multiprocessing import Pool, set_start_method
 from functools import partial
 import argparse
 from copy import deepcopy
@@ -42,6 +42,7 @@ def load_experiments(exp_path, sdevice):
 
 
 def launch_experiments(exp_list, processes=4):
+    set_start_method("spawn")
     with Pool(processes=processes) as pool:
         pool.map(start_experiment, exp_list)
 
