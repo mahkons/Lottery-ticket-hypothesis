@@ -202,7 +202,7 @@ if __name__ == "__main__":
     rewards_plot = go.Figure()
     rewards_plot.update_layout(title="Rewards", xaxis_title="Optimization step", yaxis_title="Reward")
 
-    transform = lambda data: CVaR(drawdown(data), 100, 0.1)
+    transform = lambda data: data
     for logpath in logpaths:
         add_rewards(rewards_plot, logpath, use_steps=True, repeat=args.repeat, avg_constant=10**10, transform=transform)
 

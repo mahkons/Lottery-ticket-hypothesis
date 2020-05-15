@@ -39,7 +39,6 @@ class ControllerDQN(nn.Module):
         self.steps_done = 0
 
         self.metrics = MetricsDict((Metric("qerror"), DispersionMetric("stability", 50)))
-        self.metrics["weights"].add(self.pruner.get_all_weights())
 
         if params.best_model_path != ":(":
             self.best_net = DQN(self.state_sz, self.action_sz, params.layers_sz, params.image_input).to(device)
