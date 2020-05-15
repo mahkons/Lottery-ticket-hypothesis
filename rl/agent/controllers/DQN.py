@@ -38,7 +38,7 @@ class ControllerDQN(nn.Module):
 
         self.steps_done = 0
 
-        self.metrics = MetricsDict((Metric("qerror"), DispersionMetric("stability", 50), ListMetric("weights")))
+        self.metrics = MetricsDict((Metric("qerror"), DispersionMetric("stability", 50)))
         self.metrics["weights"].add(self.pruner.get_all_weights())
 
         if params.best_model_path != ":(":
@@ -99,7 +99,6 @@ class ControllerDQN(nn.Module):
         self.pruner.prune_net(self.prune_percent)
 
     def reinit(self):
-        self.metrics["weights"].add(self.pruner.get_all_weights())
         self.memory.clean()
         self.steps_done = 0
         self.optimizer = self.optimizer_config.create_optimizer(self.net.parameters())
