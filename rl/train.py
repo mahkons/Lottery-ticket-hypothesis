@@ -17,7 +17,7 @@ from configs import Experiment
 from envs import CartPole, LunarLander, Pong, Breakout, Assault, Enduro, RoadRunner, SpaceInvaders, LunarLanderWithNoise
 from envs import ImageShuffle
 from params import CartPoleConfig, LunarLanderConfig, AtariConfig, BigLunarLanderConfig, BigAtariConfig
-from pruners import LayerwisePruner, GlobalPruner, ERPruner, RewindWrapper
+from pruners import LayerwisePruner, GlobalPruner, ERPruner, RewindWrapper, FirstLayerPruner
 from pruners import L1GlobalRescale, L1LocalRescale, L2LocalRescale, L2GlobalRescale
 from agent.stop_criterions import NoStop, MaskDiffStop, EarlyBirdStop, FixedEpochsStop
 
@@ -140,7 +140,7 @@ if __name__ == "__main__":
             env = LunarLander,
             hyperparams = LunarLanderConfig(),
             stop_criterion = FixedEpochsStop(limit_epochs=10),
-            pruner = lambda net: RewindWrapper(GlobalPruner(net, device), 0, rescale=None, reinit_to_random=False),
+            pruner = lambda net: RewindWrapper(FirstLayerPruner(net, device), 0, rescale=None, reinit_to_random=False),
         )
 
     start_experiment(experiment)

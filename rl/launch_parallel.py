@@ -8,7 +8,7 @@ from train import start_experiment
 from configs import Experiment
 from envs import LunarLander
 from params import LunarLanderConfig
-from pruners import RewindWrapper, ERPruner, LayerwisePruner, GlobalPruner
+from pruners import RewindWrapper, ERPruner, LayerwisePruner, GlobalPruner, FirstLayerPruner
 from agent.stop_criterions import MaskDiffStop, EarlyBirdStop, NoStop
 
 device = None

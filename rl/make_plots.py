@@ -163,6 +163,8 @@ def add_rewards(plot, logpath, use_steps=True, repeat=None, avg_constant=20, tra
         dirpath = paths[0]
 
     paths = get_paths(os.path.join(dirpath, "plots"), "Exploit")
+    if not paths:
+        paths = get_paths(os.path.join(dirpath, "plots"))
 
     for path in paths:
         data = load_data(logpath, os.path.join("plots", path), repeat)
@@ -204,7 +206,7 @@ if __name__ == "__main__":
 
     transform = lambda data: data
     for logpath in logpaths:
-        add_rewards(rewards_plot, logpath, use_steps=True, repeat=args.repeat, avg_constant=10**10, transform=transform)
+        add_rewards(rewards_plot, logpath, use_steps=True, repeat=args.repeat, avg_constant=20, transform=transform)
 
     plt.offline.plot(rewards_plot, filename="generated/rewards_plot.html")
 
