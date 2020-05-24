@@ -32,6 +32,8 @@ And an application of this hypothesis to reinforcement learning
 [Policy Pruning and Shrinking for Deep Reinforcement Learning](https://arxiv.org/abs/2001.05012)  
 - Reliability in RL:  
 [Measuring the Reliability of Reinforcement Learning Algorithms](https://arxiv.org/pdf/1912.05663.pdf)  
+- CURL:  
+[Contrastive Unsupervised Representations for Reinforcement Learning](https://arxiv.org/pdf/2004.04136.pdf)  
 
 
 ### More or less related
