@@ -13,7 +13,7 @@ import pandas as pd
 import json
 
 from metrics import Barrier
-from metrics.StabilityPlots import detrend, drawdown, variance, IQR, MAD, CVaR
+from metrics.StabilityPlots import detrend, drawdown, variance, IQR, MAD, CVaR, window_percentile, window_mean_among_big
 
 def add_trace(plot, x, y, name, color=None):
     plot.add_trace(go.Scatter(x=x, y=y, name=name, line_color=color))
@@ -205,8 +205,9 @@ if __name__ == "__main__":
     rewards_plot.update_layout(title="Rewards", xaxis_title="Optimization step", yaxis_title="Reward")
 
     transform = lambda data: data
+    avg_constant = 20
     for logpath in logpaths:
-        add_rewards(rewards_plot, logpath, use_steps=True, repeat=args.repeat, avg_constant=20, transform=transform)
+        add_rewards(rewards_plot, logpath, use_steps=True, repeat=args.repeat, avg_constant=avg_constant, transform=transform)
 
     plt.offline.plot(rewards_plot, filename="generated/rewards_plot.html")
 

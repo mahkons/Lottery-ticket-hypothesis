@@ -33,7 +33,7 @@ def generate_experiments():
     custom_experiment = Experiment(
         opt_steps = 1000*1000,
         episodes = 10**10,
-        prune_iters = 15,
+        prune_iters = 10,
         prune_percent = 20,
         device = None,
         logname = None,
@@ -41,18 +41,19 @@ def generate_experiments():
         env = LunarLander,
         hyperparams = custom_params,
         stop_criterion = NoStop(),
-        pruner = make_pruner(rewind_epoch=0, rescale=None, pruner_constructor=ERPruner, reinit_to_random=False),
+        pruner = make_pruner(rewind_epoch=0, rescale=L2GlobalRescale(), pruner_constructor=ERPruner, reinit_to_random=False),
     )
 
-    for layers_sz in [[2048, 512]]:
-        for repeat in range(4):
+    for layers_sz in [[1024, 16, 256, 128], [2048, 32, 256, 128]]:
+        for env, name in [(LunarLander, "LL"), (LunarLanderWithNoise, "LLNoise")]:
             random_seed = random.randint(0, 10**9)
 
             exp = deepcopy(custom_experiment)
-            exp.logname = "EpicBigLL_ER_repeat_{}".format(repeat)
+            exp.logname = "FunnyNetERPruner" + name + str(layers_sz) + "withRescale"
             exp.random_seed = random_seed
 
             exp.hyperparams.layers_sz = layers_sz
+            exp.env = env
 
             exp_list.append(exp)
 

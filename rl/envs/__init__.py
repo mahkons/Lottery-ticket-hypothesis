@@ -8,5 +8,6 @@ from .Enduro import Enduro
 from .RoadRunner import RoadRunner
 from .SpaceInvaders import SpaceInvaders
 from .LunarLanderWithNoise import LunarLanderWithNoise
+from .CarRacing import CarRacing
 
 from .ImageShuffle import ImageShuffle

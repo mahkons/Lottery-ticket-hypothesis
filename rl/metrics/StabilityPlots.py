@@ -46,6 +46,40 @@ def IQR(xs, window_size):
     return np.array(ilist)
 
 
+def window_percentile(xs, percentile, window_size):
+    plist = list()
+    window = deque()
+
+    for i in range(len(xs)):
+        if i >= window_size:
+            window.popleft()
+        window.append(xs[i])
+
+        a = np.array(window)
+        p = np.percentile(a, percentile)
+        plist.append(p)
+
+    return np.array(plist)
+
+
+def window_mean_among_big(xs, percentile, window_size):
+    mlist = list()
+    window = deque()
+
+    for i in range(len(xs)):
+        if i >= window_size:
+            window.popleft()
+        window.append(xs[i])
+
+        a = np.array(window)
+        p = np.percentile(a, percentile)
+        a = a[a >= p]
+        if a.size:
+            mlist.append(a[a >= p].mean())
+
+    return np.array(mlist)
+
+
 # Median absolute deviation
 def MAD(xs, window_size):
     mlist = list()

@@ -28,8 +28,8 @@ class ControllerDQN(nn.Module):
         self.target_net_update_steps = params.target_net_update_steps
         self.optimizer_config = params.optimizer_config
 
-        self.net = DQN(self.state_sz, self.action_sz, params.layers_sz, params.image_input).to(device)
-        self.target_net = DQN(self.state_sz, self.action_sz, params.layers_sz, params.image_input).to(device)
+        self.net = DQN(self.state_sz, self.action_sz, params.layers_sz, params.image_input, device).to(device)
+        self.target_net = DQN(self.state_sz, self.action_sz, params.layers_sz, params.image_input, device).to(device)
 
         self.prune_percent = prune_percent
         self.pruner = pruner(self.net)

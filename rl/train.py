@@ -137,10 +137,11 @@ if __name__ == "__main__":
             device = device,
             logname = args.logname,
             random_seed = RANDOM_SEED,
-            env = LunarLander,
-            hyperparams = LunarLanderConfig(),
-            stop_criterion = FixedEpochsStop(limit_epochs=10),
-            pruner = lambda net: RewindWrapper(FirstLayerPruner(net, device), 0, rescale=None, reinit_to_random=False),
+            env = Assault,
+            hyperparams = AtariConfig(),
+            stop_criterion = NoStop(),
+            pruner = lambda net: RewindWrapper(GlobalPruner(net, device), 0, rescale=None, reinit_to_random=False),
         )
+    experiment.hyperparams.layers_sz = "vae"
 
     start_experiment(experiment)

@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 
+from worldmodel.VAE import VAE
+
 # beware, works only with batches
 class Flatten(nn.Module):
     def forward(self, input):
@@ -8,8 +10,10 @@ class Flatten(nn.Module):
 
 
 class DQN(nn.Module):
-    def __init__(self, state_sz, action_sz, layers_sz, image_input):
+    def __init__(self, state_sz, action_sz, layers_sz, image_input, device):
         super(DQN, self).__init__()
+        self.layers_sz = layers_sz
+        self.device = device
     
         if image_input:
             layers = self.create_atari_layers(action_sz, layers_sz)
@@ -73,10 +77,40 @@ class DQN(nn.Module):
                 nn.ReLU(inplace=True),
                 nn.Linear(256, action_sz)
             ]
+        elif layers_sz == "vae":
+            vae = VAE.load_model("generated/vae.torch", image_height=84, image_width=84, image_channels=1, z_dim=256)
+            self.encoder = vae.encoder
+            self.fc1 = vae.fc1
+            self.fc2 = vae.fc2
+            layers = [
+                nn.Linear(1024, 512),
+                nn.ReLU(inplace=True),
+                nn.Linear(512, action_sz),
+            ]
+            self.forward_cnt = 0
         else:
             raise ValueError("Incorrect layers_sz")
         return layers
 
+
+    def reparameterize(self, mu: torch.Tensor, logstd: torch.Tensor):
+        std = (logstd * 0.5).exp_()
+        std_prob = torch.randn(*mu.size(), device=self.device)
+        return mu + std_prob * std
+
+    def bottleneck(self, h):
+        mu, logvar = self.fc1(h), self.fc2(h)
+        z = self.reparameterize(mu, logvar)
+        return z, mu, logvar
+
+    def encode(self, x):
+        h = self.encoder(x)
+        z, mu, logvar = self.bottleneck(h)
+        return z
+
     def forward(self, x):
+        if self.layers_sz == "vae":
+            x = self.encode(x.reshape(-1, 1, 84, 84))
+            return self.seq(x.reshape(-1, 4 * 256))
         return self.seq(x)
 

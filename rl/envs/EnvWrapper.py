@@ -43,3 +43,6 @@ class EnvWrapper():
 
     def transform_obs(self, obs):
         return obs
+
+    def sample_action(self):
+        return self.env.action_space.sample()
