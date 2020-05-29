@@ -3,6 +3,7 @@ import torch.nn as nn
 import numpy as np
 
 from pruners.Pruner import Pruner
+from worldmodel.VAE import Flatten
 
 
 # Prunes p% of remaining weights
@@ -17,7 +18,9 @@ class ERPruner(Pruner):
             assert module == net or \
                 isinstance(module, nn.Linear) or \
                 isinstance(module, nn.ReLU) or \
-                isinstance(module, nn.Sequential)
+                isinstance(module, nn.Sequential) or \
+                isinstance(module, nn.Conv2d) or \
+                isinstance(module, Flatten)
 
         self.density = 1
 
@@ -27,10 +30,13 @@ class ERPruner(Pruner):
         for name, param in self.net.named_parameters():
             if not "weight" in name:
                 continue
-            n, m = param.data.shape
-            params_sum += n * m
-            self.param_c[name] = 1 - (n + m) / (n * m)
-            params_wsum += n * m * self.param_c[name]
+            p_sh = param.data.shape
+            p_prod = np.prod(p_sh)
+            p_sum = np.sum(p_sh)
+
+            params_sum += p_prod
+            self.param_c[name] = 1 - p_sum / p_prod
+            params_wsum += p_prod * self.param_c[name]
 
         self.s0 = params_sum / params_wsum
 
