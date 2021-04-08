@@ -175,7 +175,7 @@ def add_rewards(plot, logpath, use_steps=True, repeat=None, avg_constant=20, tra
 
 
 def remove_repeat_suffix(x):
-    pattern = re.compile("_repeat_\d*")
+    pattern = re.compile("repeat_\d*")
     pos = pattern.search(x)
     if pos != None:
         x = x[:pos.span()[0]]

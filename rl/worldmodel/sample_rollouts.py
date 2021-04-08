@@ -11,7 +11,7 @@ from random import choice, random, randint
 import argparse
 import torch
 
-from envs import Assault
+from envs import Assault, ImageShuffle
 
 def create_parser():
     parser = argparse.ArgumentParser()
@@ -54,7 +54,8 @@ def sample_rollouts(env, iters, steps):
 
 if __name__ == '__main__':
     args = create_parser().parse_args()
-    env = Assault(23)
+    #  env = Assault(23)
+    env = ImageShuffle(6, np.random.permutation(36), Assault, 23)
     device = torch.device(args.device)
 
     sample_rollouts(env, args.iters, args.steps)

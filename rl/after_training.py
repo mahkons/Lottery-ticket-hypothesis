@@ -6,15 +6,15 @@ import torch
 import json
 
 from agent.Agent import Agent
-from envs import LunarLander
+from envs import LunarLander, Assault
 from agent.controllers.FixedController import FixedController
 from networks.DQN import DQN
 from logger.Logger import log, init_logger
 
 
 def launch_after_training(params, net_state_dict, device, episodes, opt_steps):
-    env = LunarLander(23)
-    net = DQN(env.state_sz, env.action_sz, json.loads(params["layers_sz"]), params["image_input"] == "True").to(device)
+    env = Assault(23)
+    net = DQN(env.state_sz, env.action_sz, "vae", params["image_input"] == "True", device=device).to(device)
     net.load_state_dict(net_state_dict)
     controller = FixedController(lambda state, explore: net(state.to(device)).max(1)[1].item())
     agent = Agent(env, controller)

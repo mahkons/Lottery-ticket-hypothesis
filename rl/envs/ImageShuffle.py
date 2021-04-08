@@ -50,3 +50,6 @@ class ImageShuffle():
 
     def get_total_reward(self):
         return self.env.get_total_reward()
+
+    def sample_action(self):
+        return self.env.sample_action()

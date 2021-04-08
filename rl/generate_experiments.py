@@ -17,45 +17,43 @@ from launch_parallel import make_pruner
 def generate_experiments():
     exp_list = list()
     custom_params = DQNConfig(
-        memory_config = ReplayMemoryConfig(200*1000),
-        optimizer_config = AdamConfig(1e-3),
+        memory_config = ReplayMemoryConfig(1000*1000),
+        optimizer_config = AdamConfig(1e-5),
         batch_size = 64,
         gamma = 0.99,
         eps_start = 0.9,
         eps_end = 0.05,
-        eps_decay = 20000,
-        target_net_update_steps = 2500,
-        layers_sz = None,
-        image_input = False,
+        eps_decay = 100000,
+        target_net_update_steps = 10000,
+        layers_sz = "vae",
+        image_input = True,
         best_model_path = ":(",
     )
 
     custom_experiment = Experiment(
         opt_steps = 1000*1000,
         episodes = 10**10,
-        prune_iters = 10,
+        prune_iters = 5,
         prune_percent = 20,
         device = None,
         logname = None,
         random_seed = None,
-        env = LunarLander,
+        env = Assault,
         hyperparams = custom_params,
         stop_criterion = NoStop(),
-        pruner = make_pruner(rewind_epoch=0, rescale=L2GlobalRescale(), pruner_constructor=ERPruner, reinit_to_random=False),
+        pruner = make_pruner(rewind_epoch=0, rescale=None, pruner_constructor=ERPruner, reinit_to_random=False),
     )
 
-    for layers_sz in [[1024, 16, 256, 128], [2048, 32, 256, 128]]:
-        for env, name in [(LunarLander, "LL"), (LunarLanderWithNoise, "LLNoise")]:
-            random_seed = random.randint(0, 10**9)
+    for lr in [5e-4, 1e-4, 5e-5, 1e-5]:
+        random_seed = random.randint(0, 10**9)
 
-            exp = deepcopy(custom_experiment)
-            exp.logname = "FunnyNetERPruner" + name + str(layers_sz) + "withRescale"
-            exp.random_seed = random_seed
+        exp = deepcopy(custom_experiment)
+        exp.logname = "VaeAssaultPruneER_lr{}".format(lr)
+        exp.random_seed = random_seed
 
-            exp.hyperparams.layers_sz = layers_sz
-            exp.env = env
+        exp.hyperparams.optimizer_config = AdamConfig(lr)
 
-            exp_list.append(exp)
+        exp_list.append(exp)
 
 
     torch.save(exp_list, "generated/exp_list")
